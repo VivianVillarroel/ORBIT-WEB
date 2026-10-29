@@ -1,0 +1,15 @@
+ORBIT - versión alternativa de soluciones (21 de octubre de 2026)
+
+La página principal usa el diseño de Downloads/ORBIT_sitio_web/orbit-web, con sus imágenes y animaciones. Se retiraron la sección de integrantes y sus enlaces. Los laboratorios y contenidos se presentan como aplicaciones de las soluciones de ORBIT, sin limitar la oferta a esos ejemplos. Se añadió la plataforma académica y el acceso a M2.
+
+Carpeta del sitio: orbit-web. Archivos exclusivos de la portada: orbit-web/landing. El panel, los roles, los certificados y M2 conservan sus archivos y estilos. El inicio de sesión de la portada usa la API real, y las solicitudes de demo se guardan en ORBIT.
+
+Vista local de esta versión: http://localhost:8097/
+Versión original: http://localhost:8096/
+
+Las dos versiones locales usan la misma base de datos actual. Para una instalación independiente, crear una base vacía, importar base-de-datos.sql y ajustar orbit-web/api/config.local.php. Ese archivo contiene la conexión local; este paquete es un respaldo privado.
+
+Para ejecutar: php -S localhost:8097 -t orbit-web
+No abrir index.html como archivo, porque el acceso y los formularios necesitan PHP.
+
+Validado: recursos y enlaces internos; ausencia de integrantes; inicio de sesión del director desde la portada; recepción de solicitud de prueba en la base y limpieza posterior; JavaScript sin errores de sintaxis. Las cifras del piloto y las imágenes proceden del diseño suministrado.

@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ORBIT | Simuladores de Realidad Virtual y Aumentada a medida</title>
+<meta name="description" content="ORBIT diseña y desarrolla simuladores de Realidad Virtual y experiencias de Realidad Aumentada a la medida de universidades, colegios, editoriales, museos y empresas.">
+<meta name="theme-color" content="#F7F6FC">
+<link rel="icon" href="img/orbit-logo.svg" type="image/svg+xml">
+<script>
+  /* Tema antes de pintar: elección guardada o la del sistema. */
+  (function () {
+    var t = null; try { t = localStorage.getItem("orbit-theme"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+<link rel="preload" href="fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="img/ventilador.webp" as="image" type="image/webp" fetchpriority="high">
+<link rel="stylesheet" href="css/styles.css">
+<script>if (location.protocol === "file:") document.write('<link rel="stylesheet" href="css/font-local.css">');</script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 1964 411"><path fill="currentColor" fill-rule="evenodd" d="M281.50 7.10C234.44 12.22 191.31 32.58 158.99 64.97C138.51 85.49 125.88 104.11 115.24 129.50C110.28 141.34 107 151.01 107 153.79C107 155.30 110.10 152 124.66 135C146.60 109.39 173.07 89.54 202.54 76.62C251.70 55.06 310.94 52.23 361.32 69.04C406.98 84.26 449.52 119.38 469.26 158.15C486.47 191.93 486.67 221.58 469.93 255.63C461.20 273.38 447.63 290.33 431.10 304.13C399.66 330.38 361.78 345.95 319.22 350.12C304.34 351.57 270.09 350.69 256 348.49C218.07 342.56 182.65 327.74 153.50 305.62C137.36 293.37 127.21 283.35 106.27 259C105.52 258.13 107.09 264.23 109.74 272.50C125.45 321.40 170.81 368.68 222.31 389.84C275.15 411.55 334.96 409.54 385.29 384.38C404.81 374.62 420.69 363.33 436.35 348.07C452.80 332.05 462.74 319.04 472.82 300.34C483.61 280.29 490.09 261.84 494.16 239.50C497.39 221.82 497.39 186.83 494.17 169.11C488.41 137.40 473.71 104.90 454.57 81.53C446 71.07 429.11 54.52 420 47.64C397.75 30.84 372.01 18.40 346.50 12.12C327.27 7.38 299.03 5.20 281.50 7.10Z M592 206.96L592 382 L620.50 382L649 382 L649 318L649 254 L686.97 254L724.93 254 L746.74 280.25C758.74 294.69 773.27 312.29 779.03 319.36C784.79 326.43 794.59 338.35 800.81 345.86C807.03 353.36 816.26 364.54 821.31 370.70L830.50 381.91 L865.25 381.95C884.36 381.98 900 381.76 900 381.46C900 381.16 897.15 377.45 893.67 373.21C883.96 361.39 846.30 316.34 839.12 307.95C835.60 303.85 829.46 296.68 825.45 292C808.50 272.20 788 247.61 788.01 247.08C788.01 246.76 791.50 245.52 795.76 244.33C832.17 234.12 861.66 207.86 872.50 176.01C878.19 159.28 879.78 136.55 876.47 119.14C871.37 92.31 856.41 69.73 833.50 54.27C820.06 45.20 802.12 38.07 783.46 34.36C775.35 32.75 765.85 32.55 683.25 32.25L592 31.92 L592 206.96Z M753.29 75.02C797.75 78.63 824 103.12 824 141C824 179.29 797.27 205.08 752.50 209.99C746.25 210.67 725.05 210.98 696 210.79L649.50 210.50 L649.24 142.82L648.99 75.14 L651.24 74.75C656.39 73.84 741.62 74.07 753.29 75.02Z M1005 207L1005 382.08 L1109.75 381.72C1201.76 381.40 1215.37 381.16 1221.69 379.74C1261 370.89 1286.81 353.59 1300.47 326.94C1308.45 311.38 1310.43 302.95 1310.43 284.50C1310.43 272.04 1310.05 268.07 1308.15 261.04C1304.69 248.15 1297.90 235.92 1289.11 226.72C1277.71 214.79 1265.93 207.53 1248.93 201.98C1243.79 200.30 1239.42 198.76 1239.21 198.55C1239 198.34 1240.84 197.28 1243.29 196.20C1260.69 188.50 1277.23 171.38 1284.28 153.78C1290.54 138.13 1292.17 114.73 1288.08 99C1279.47 65.83 1254.40 44.21 1213.50 34.69C1204.74 32.65 1201.87 32.58 1104.75 32.26L1005 31.93 L1005 207Z M1192.50 76.40C1215.86 81.71 1232.52 96.45 1235.99 114.89C1239.60 134.06 1234.77 150.39 1221.58 163.59C1213.69 171.49 1206.25 175.61 1193.30 179.24C1185.73 181.37 1183.68 181.44 1123.75 181.77L1062 182.10 L1062 128.72C1062 99.36 1062.33 75.01 1062.72 74.61C1063.12 74.21 1090.68 74.04 1123.97 74.24C1178.08 74.55 1185.35 74.77 1192.50 76.40Z M1208.22 229.22C1228.72 234.81 1243 245.10 1250 259.32C1254.87 269.22 1256.41 276.87 1255.68 287.56C1253.93 313 1236.28 331.91 1206.50 340.21C1198.64 342.40 1197.29 342.45 1130.25 342.77L1062 343.09 L1062 284.49L1062 225.90 L1130.25 226.23L1198.50 226.56 L1208.22 229.22Z M1436.67 32.67C1436.30 33.03 1436 111.78 1436 207.67L1436 382 L1465 382L1494 382 L1494 207L1494 32 L1465.67 32C1450.08 32 1437.03 32.30 1436.67 32.67Z M1609.67 32.66C1609.30 33.03 1609 42.93 1609 54.67L1609 76 L1665.25 76.14C1724.49 76.28 1733.43 76.35 1746.75 76.75L1755 77 L1755 229.50L1755 382 L1783.50 382L1811.99 382 L1812.25 229.25L1812.50 76.50 L1868.50 76.36C1899.30 76.29 1932.05 76.18 1941.27 76.11L1958.04 76 L1957.77 54.25L1957.50 32.50 L1783.92 32.25C1688.45 32.11 1610.04 32.30 1609.67 32.66Z M120.50 201.01C78.04 202.98 18.72 207.69 9 209.86C6.16 210.49 5.88 210.76 7.50 211.25C13.92 213.19 42.30 216.02 80 218.47C122.85 221.26 223.97 222.07 276 220.05C332.66 217.84 397.93 212.60 395.77 210.43C393.86 208.52 350.37 204.90 293.50 201.92C267.82 200.57 144.04 199.92 120.50 201.01Z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.2v13.6L19 12z" fill="currentColor"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 8h16M4 16h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 19.5c1-3.6 3.8-5.6 7.2-5.6s6.2 2 7.2 5.6"/></g></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.4 3.6 5.2 3.6 8.5s-1.2 6.1-3.6 8.5c-2.4-2.4-3.6-5.2-3.6-8.5s1.2-6.1 3.6-8.5z"/></g></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></g></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-drag" viewBox="0 0 24 24"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M4.5 7l7.5 6 7.5-6"/></g></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0113 0c0 5.4-6.5 11-6.5 11z" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.3"/></g></symbol>
+</svg>
+
+<a class="skip" href="#main">Saltar al contenido</a>
+
+<header class="hdr" id="top">
+  <div class="wrap hdr-row">
+    <a class="logo" href="#inicio" aria-label="ORBIT, inicio"><svg viewBox="0 0 1964 411" aria-hidden="true"><use href="#logo"/></svg></a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#soluciones">Soluciones</a>
+      <a href="#proyectos">Proyectos</a>
+      <a href="#proceso">Cómo trabajamos</a>
+      <a href="#resultados">Resultados</a>
+      <a href="#estudiantes">Estudiantes</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <div class="tools">
+      <div class="lang">
+        <button class="tool" type="button" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu" aria-label="Idioma"><svg aria-hidden="true"><use href="#i-globe"/></svg><span class="lang-cur" data-noi18n>ES</span></button>
+        <div class="lang-menu" id="langMenu" hidden data-noi18n>
+          <button type="button" data-lang="es" aria-pressed="true">Español</button>
+          <button type="button" data-lang="en" aria-pressed="false">English</button>
+          <button type="button" data-lang="pt" aria-pressed="false">Português</button>
+        </div>
+      </div>
+      <button class="tool theme-btn" type="button" data-theme-toggle aria-label="Cambiar tema"><svg class="sun" aria-hidden="true"><use href="#i-sun"/></svg><svg class="moon" aria-hidden="true"><use href="#i-moon"/></svg></button>
+    </div>
+    <a class="btn btn-ink btn-sm login-btn" href="login.html"><svg aria-hidden="true"><use href="#i-user"/></svg>Iniciar sesión</a>
+    <button class="tool menu-btn" type="button" id="menuBtn" aria-expanded="false" aria-controls="sheet" aria-label="Abrir menú"><svg aria-hidden="true"><use href="#i-menu"/></svg></button>
+  </div>
+  <div class="sheet" id="sheet" hidden>
+    <nav class="wrap sheet-nav" aria-label="Menú">
+      <a href="#soluciones">Soluciones</a>
+      <a href="#proyectos">Proyectos</a>
+      <a href="#proceso">Cómo trabajamos</a>
+      <a href="#resultados">Resultados</a>
+      <a href="#estudiantes">Para estudiantes</a>
+      <a href="#preguntas">Preguntas frecuentes</a>
+      <a href="#contacto">Contacto</a>
+      <div class="sheet-row">
+        <div class="sheet-langs" role="group" aria-label="Idioma" data-noi18n>
+          <button type="button" data-lang="es" aria-pressed="true">ES</button>
+          <button type="button" data-lang="en" aria-pressed="false">EN</button>
+          <button type="button" data-lang="pt" aria-pressed="false">PT</button>
+        </div>
+        <button class="tool theme-btn" type="button" data-theme-toggle aria-label="Cambiar tema"><svg class="sun" aria-hidden="true"><use href="#i-sun"/></svg><svg class="moon" aria-hidden="true"><use href="#i-moon"/></svg></button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- Hero: el equipo real se convierte en modelo al arrastrar -->
+  <section class="hero" id="inicio">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <h1 class="display">Aulas sin muros, aprendizaje sin límites.</h1>
+        <p class="lead">Diseñamos y desarrollamos simuladores de Realidad Virtual y experiencias de Realidad Aumentada a la medida de tu institución. Tú nos dices qué quieres enseñar; nosotros lo construimos.</p>
+        <div class="cta-row">
+          <a class="btn btn-brand" href="#contacto">Cotizar un proyecto</a>
+          <a class="btn btn-ghost" href="#resultados"><span class="play" aria-hidden="true"><svg><use href="#i-play"/></svg></span>Ver el video</a>
+        </div>
+      </div>
+
+      <figure class="scan" id="scan">
+        <div class="scan-stage">
+          <span class="crop" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <img class="scan-photo" src="img/ventilador.webp" alt="Ventilador mecánico Dräger Savina 300: a un lado el equipo real y al otro su dibujo técnico para el modelo 3D" width="960" height="720" fetchpriority="high" decoding="async">
+          <img class="scan-lines" src="img/ventilador-lineas.webp" alt="" width="960" height="720" decoding="async">
+          <span class="callout c1" aria-hidden="true" style="--x:40%;--y:27%"><i></i><span>Pantalla de monitoreo</span></span>
+          <span class="callout c2" aria-hidden="true" style="--x:75.5%;--y:40%"><i></i><span>Perilla de control</span></span>
+          <span class="callout c3" aria-hidden="true" style="--x:44%;--y:66%"><i></i><span>Circuito del paciente</span></span>
+          <span class="scan-bar" aria-hidden="true"><span class="knob"><svg><use href="#i-drag"/></svg></span></span>
+          <span class="tagline t-model" aria-hidden="true">Modelo 3D</span>
+          <span class="tagline t-real" aria-hidden="true">Equipo real</span>
+          <input class="scan-range" id="scanRange" type="range" min="0" max="100" value="52" aria-label="Comparar el modelo 3D con el equipo real">
+        </div>
+        <figcaption>Arrastra para ver cómo convertimos un equipo real en simulador.</figcaption>
+      </figure>
+    </div>
+
+    <div class="wrap trust">
+      <h2 class="trust-title">Confían en nosotros</h2>
+      <ul class="trust-logos">
+        <li><img class="lg-kamay" src="img/logo-kamay.webp" alt="Kamay, Premios a la innovación" width="357" height="127" loading="lazy" decoding="async"></li>
+        <li><img class="lg-univalle" src="img/logo-univalle.webp" alt="Universidad Privada del Valle" width="151" height="150" loading="lazy" decoding="async"></li>
+        <li><img class="lg-emprender" src="img/logo-emprender.webp" alt="Emprender Futuro" width="240" height="65" loading="lazy" decoding="async"></li>
+        <li><img class="lg-vcilat" src="img/logo-vcilat.webp" alt="VCILAT" width="278" height="88" loading="lazy" decoding="async"></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Por qué -->
+  <section class="sec why" aria-labelledby="whyTitle">
+    <div class="wrap why-grid">
+      <h2 class="statement" id="whyTitle">Un ventilador mecánico o un tomógrafo cuesta decenas o cientos de miles de dólares. Por eso muchos estudiantes se gradúan sin haberlos usado nunca.</h2>
+      <dl class="why-list">
+        <div><dt>Costosos</dt><dd>Pocas instituciones pueden comprar y mantener equipos para todos.</dd></div>
+        <div><dt>Escasos</dt><dd>Con un solo equipo para muchos estudiantes, la práctica se vuelve mirar.</dd></div>
+        <div><dt>Riesgosos</dt><dd>Aprender con pacientes o equipos reales, sin experiencia, no es seguro.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- Soluciones a medida -->
+  <section class="sec" id="soluciones">
+    <div class="wrap">
+      <div class="head">
+        <h2 class="h2">Construimos la solución que tu institución necesita.</h2>
+        <p class="lead">No trabajamos con un catálogo cerrado. Escuchamos qué quieres enseñar o entrenar y desarrollamos la experiencia a medida, desde el modelo 3D hasta la puesta en marcha.</p>
+      </div>
+      <div class="sol">
+        <ul class="sol-list" id="solList">
+          <li><button type="button" class="sol-item" aria-pressed="true" data-img="img/estudiantes-vr.webp" data-alt="Dos estudiantes practicando con visores de Realidad Virtual">
+            <span class="sol-name">Simuladores de equipos</span>
+            <span class="tags"><span class="tag vr">VR</span></span>
+            <span class="sol-desc">Modelamos los equipos de tu laboratorio para que tus estudiantes los operen con sus manos en un visor Meta Quest.</span>
+          </button></li>
+          <li><button type="button" class="sol-item" aria-pressed="false" data-img="img/ar-tablet.webp" data-alt="Tableta que muestra un corazón en 3D sobre la página de un libro">
+            <span class="sol-name">Libros y materiales con Realidad Aumentada</span>
+            <span class="tags"><span class="tag ar">AR</span></span>
+            <span class="sol-desc">Tus páginas impresas muestran modelos 3D, explicaciones y preguntas desde el celular.</span>
+          </button></li>
+          <li><button type="button" class="sol-item" aria-pressed="false" data-img="img/doctora-vr.webp" data-alt="Profesional de salud capacitándose con un visor de Realidad Virtual">
+            <span class="sol-name">Capacitación inmersiva para empresas</span>
+            <span class="tags"><span class="tag vr">VR</span></span>
+            <span class="sol-desc">Procedimientos, mantenimiento y seguridad practicados sin detener la operación ni arriesgar equipos.</span>
+          </button></li>
+          <li><button type="button" class="sol-item" aria-pressed="false" data-img="img/aula.webp" data-alt="Docente explicando el corazón en un aula">
+            <span class="sol-name">Laboratorios virtuales para colegios</span>
+            <span class="tags"><span class="tag vr">VR</span><span class="tag ar">AR</span></span>
+            <span class="sol-desc">Ciencias y temas abstractos para ver, girar y explorar en 3D desde el aula.</span>
+          </button></li>
+          <li><button type="button" class="sol-item" aria-pressed="false" data-img="img/ecosistema.webp" data-alt="Libro, celular, laptop y visor conectados alrededor de un personaje en 3D">
+            <span class="sol-name">Contenido educativo y exposiciones</span>
+            <span class="tags"><span class="tag vr">VR</span><span class="tag ar">AR</span></span>
+            <span class="sol-desc">Museos, editoriales y ferias con escenas y personajes en 3D que el público explora por su cuenta.</span>
+          </button></li>
+        </ul>
+        <figure class="sol-preview" aria-hidden="true">
+          <img id="solImg" src="img/estudiantes-vr.webp" alt="" width="900" height="554" loading="lazy" decoding="async">
+        </figure>
+      </div>
+      <p class="sol-more">¿Tu idea no está en la lista? También la desarrollamos. <a href="#contacto">Cuéntanos tu idea</a></p>
+    </div>
+  </section>
+
+  <!-- Proyectos -->
+  <section class="sec projects" id="proyectos">
+    <div class="wrap">
+      <div class="head">
+        <h2 class="h2">Algunos proyectos que ya desarrollamos.</h2>
+        <p class="lead">Cada uno nació de una necesidad concreta de enseñanza. Toca los puntos para conocer sus partes.</p>
+      </div>
+
+      <div class="ptabs" role="tablist" aria-label="Proyectos" id="ptabs">
+        <button role="tab" id="t-vent" aria-controls="p-vent" aria-selected="true" data-k="vent"><b>VentLab</b><span class="tag vr">VR</span></button>
+        <button role="tab" id="t-ct" aria-controls="p-ct" aria-selected="false" tabindex="-1" data-k="ct"><b>CT Virtual Lab</b><span class="tag vr">VR</span></button>
+        <button role="tab" id="t-ar" aria-controls="p-ar" aria-selected="false" tabindex="-1" data-k="ar"><b>AR Learning</b><span class="tag ar">AR</span></button>
+        <button role="tab" id="t-new" aria-controls="p-new" aria-selected="false" tabindex="-1" data-k="new" class="ptab-new"><svg aria-hidden="true"><use href="#i-plus"/></svg><b>Tu proyecto</b></button>
+      </div>
+
+      <div class="pview">
+        <div class="pstage" id="pstage">
+          <div class="pimg on" data-k="vent">
+            <div class="imgbox" style="--ar: 4 / 3; --w: 74%">
+              <img src="img/ventilador.webp" alt="Ventilador mecánico Dräger Savina 300" width="960" height="720" loading="lazy" decoding="async">
+              <button class="hs" type="button" style="--x:40%;--y:27%" aria-expanded="false" aria-controls="h1"><span class="sr">Pantalla de monitoreo</span></button>
+              <div class="pop" id="h1" role="tooltip" style="--x:40%;--y:27%"><b>Pantalla de monitoreo</b>Curvas y valores de la ventilación en tiempo real.</div>
+              <button class="hs" type="button" style="--x:75.5%;--y:40%" aria-expanded="false" aria-controls="h2"><span class="sr">Perilla de control</span></button>
+              <div class="pop left" id="h2" role="tooltip" style="--x:75.5%;--y:40%"><b>Perilla de control</b>Ajusta y confirma los parámetros del equipo.</div>
+              <button class="hs" type="button" style="--x:44%;--y:66%" aria-expanded="false" aria-controls="h3"><span class="sr">Conexiones del circuito</span></button>
+              <div class="pop" id="h3" role="tooltip" style="--x:44%;--y:66%"><b>Conexiones del circuito</b>Donde se conecta el circuito del paciente.</div>
+            </div>
+          </div>
+          <div class="pimg" data-k="ct" hidden>
+            <div class="imgbox" style="--ar: 952 / 691; --w: 80%">
+              <img src="img/tomografo.webp" alt="Tomógrafo Siemens SOMATOM" width="952" height="691" loading="lazy" decoding="async">
+              <button class="hs" type="button" style="--x:19.8%;--y:42.7%" aria-expanded="false" aria-controls="h4"><span class="sr">Gantry</span></button>
+              <div class="pop" id="h4" role="tooltip" style="--x:19.8%;--y:42.7%"><b>Gantry</b>Anillo donde giran el tubo de rayos X y los detectores.</div>
+              <button class="hs" type="button" style="--x:69%;--y:57.4%" aria-expanded="false" aria-controls="h5"><span class="sr">Camilla</span></button>
+              <div class="pop left" id="h5" role="tooltip" style="--x:69%;--y:57.4%"><b>Camilla</b>Desplaza al paciente a través del gantry.</div>
+              <button class="hs" type="button" style="--x:58.5%;--y:23.8%" aria-expanded="false" aria-controls="h6"><span class="sr">Panel de control</span></button>
+              <div class="pop left" id="h6" role="tooltip" style="--x:58.5%;--y:23.8%"><b>Panel de control</b>Mandos para posicionar la camilla y el gantry.</div>
+            </div>
+          </div>
+          <div class="pimg" data-k="ar" hidden>
+            <div class="imgbox" style="--ar: 3 / 2; --w: 86%">
+              <img src="img/ar-celular.webp" alt="Celular mostrando un corazón en 3D sobre un libro" width="900" height="600" loading="lazy" decoding="async">
+              <button class="hs" type="button" style="--x:33%;--y:52%" aria-expanded="false" aria-controls="h7"><span class="sr">Modelo 3D</span></button>
+              <div class="pop" id="h7" role="tooltip" style="--x:33%;--y:52%"><b>Modelo 3D</b>El tema aparece en 3D sobre la página.</div>
+              <button class="hs" type="button" style="--x:62%;--y:22%" aria-expanded="false" aria-controls="h8"><span class="sr">Paneles de información</span></button>
+              <div class="pop left" id="h8" role="tooltip" style="--x:62%;--y:22%"><b>Paneles de información</b>Datos y preguntas que el estudiante explora.</div>
+              <button class="hs" type="button" style="--x:73%;--y:68%" aria-expanded="false" aria-controls="h9"><span class="sr">Libro con marcador</span></button>
+              <div class="pop left" id="h9" role="tooltip" style="--x:73%;--y:68%"><b>Libro con marcador</b>La página impresa activa la experiencia.</div>
+            </div>
+          </div>
+          <div class="pimg pnew" data-k="new" hidden>
+            <div class="slot"><svg aria-hidden="true"><use href="#i-plus"/></svg><span>Tu equipo, tu libro o tu exposición</span></div>
+          </div>
+        </div>
+
+        <div class="pinfo">
+          <div role="tabpanel" id="p-vent" aria-labelledby="t-vent">
+            <p class="ptype"><span class="tag vr">VR</span>Simulador en Realidad Virtual</p>
+            <h3 class="h3">VentLab</h3>
+            <p>Opera y da mantenimiento a un ventilador mecánico real, paso a paso, sin poner en riesgo a un paciente ni al equipo.</p>
+            <dl class="spec">
+              <div><dt>Equipo</dt><dd>Dräger Savina 300</dd></div>
+              <div><dt>Practica</dt><dd>Componentes, funcionamiento y mantenimiento guiado</dd></div>
+              <div><dt>Dónde</dt><dd>Visor Meta Quest, con hand tracking</dd></div>
+            </dl>
+            <a class="btn btn-line" href="#contacto">Quiero un simulador así</a>
+          </div>
+          <div role="tabpanel" id="p-ct" aria-labelledby="t-ct" hidden>
+            <p class="ptype"><span class="tag vr">VR</span>Simulador en Realidad Virtual</p>
+            <h3 class="h3">CT Virtual Lab</h3>
+            <p>Un tomógrafo completo para explorar por dentro: cómo está hecho, cómo funciona y cómo se mantiene.</p>
+            <dl class="spec">
+              <div><dt>Equipo</dt><dd>Siemens SOMATOM</dd></div>
+              <div><dt>Practica</dt><dd>Componentes, principios de funcionamiento y mantenimiento</dd></div>
+              <div><dt>Dónde</dt><dd>Visor Meta Quest, con hand tracking</dd></div>
+            </dl>
+            <a class="btn btn-line" href="#contacto">Quiero un simulador así</a>
+          </div>
+          <div role="tabpanel" id="p-ar" aria-labelledby="t-ar" hidden>
+            <p class="ptype"><span class="tag ar">AR</span>Experiencia en Realidad Aumentada</p>
+            <h3 class="h3">AR Learning</h3>
+            <p>Libros y materiales impresos que cobran vida desde el celular. Un personaje en 3D presenta el tema y un quiz cierra cada lección.</p>
+            <dl class="spec">
+              <div><dt>Contenido</dt><dd>Libros y guías de cualquier área</dd></div>
+              <div><dt>Evalúa</dt><dd>Un quiz al cerrar cada tema</dd></div>
+              <div><dt>Dónde</dt><dd>Celular con cámara</dd></div>
+            </dl>
+            <a class="btn btn-line" href="#contacto">Quiero una experiencia así</a>
+          </div>
+          <div role="tabpanel" id="p-new" aria-labelledby="t-new" hidden>
+            <p class="ptype"><span class="tag mix">A medida</span>Desarrollo a cotización</p>
+            <h3 class="h3">Tu proyecto</h3>
+            <p>El próximo simulador puede ser el de tu equipo, tu libro o tu exposición. Cuéntanos qué necesitas y te enviamos una cotización.</p>
+            <dl class="spec">
+              <div><dt>Qué</dt><dd>Simuladores, Realidad Aumentada o capacitación</dd></div>
+              <div><dt>Para</dt><dd>Universidades, colegios, editoriales, museos y empresas</dd></div>
+              <div><dt>Incluye</dt><dd>Diseño, desarrollo, implementación y soporte</dd></div>
+            </dl>
+            <a class="btn btn-brand" href="#contacto">Cotizar mi proyecto</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proceso -->
+  <section class="sec" id="proceso">
+    <div class="wrap">
+      <div class="head">
+        <h2 class="h2">De la idea al aula en cuatro pasos.</h2>
+        <p class="lead">Así trabajamos cada proyecto a medida.</p>
+      </div>
+      <ol class="steps">
+        <li><span class="sn" aria-hidden="true">01</span><h3>Conversamos</h3><p>Nos cuentas qué quieres enseñar, a quién y con qué equipos o materiales.</p></li>
+        <li><span class="sn" aria-hidden="true">02</span><h3>Cotizamos</h3><p>Te enviamos una propuesta con alcance, plazos y costo antes de empezar.</p></li>
+        <li><span class="sn" aria-hidden="true">03</span><h3>Desarrollamos</h3><p>Modelamos en 3D, programamos y validamos cada avance con tus docentes.</p></li>
+        <li><span class="sn" aria-hidden="true">04</span><h3>Implementamos</h3><p>Instalamos, capacitamos a tu equipo y te acompañamos durante el uso.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Resultados + video (banda inmersiva) -->
+  <section class="sec night" id="resultados">
+    <div class="wrap">
+      <div class="head">
+        <h2 class="h2">Lo probamos con 60 estudiantes universitarios.</h2>
+        <p class="lead">Al terminar, evaluaron la experiencia. Esto respondieron.</p>
+      </div>
+      <div class="res-grid">
+        <a class="vcard" href="https://www.youtube.com/watch?v=VsUV9XSsSXo" target="_blank" rel="noopener" aria-label="Ver el video de ORBIT en YouTube (se abre en otra pestaña)">
+          <img src="img/doctora-vr.webp" alt="" width="1200" height="800" loading="lazy" decoding="async">
+          <span class="vplay" aria-hidden="true"><svg><use href="#i-play"/></svg></span>
+          <span class="vcap"><b>Mira ORBIT en acción</b><span>Se abre en YouTube</span></span>
+        </a>
+        <ul class="stats">
+          <li><b>95.5<small>%</small></b><span>dijo aprender mejor con ORBIT que con el método tradicional.</span></li>
+          <li><b>4.7<small>/5</small></b><span>de utilidad percibida.</span></li>
+          <li><b>9.4<small>/10</small></b><span>de calificación general a la experiencia.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Estudiantes independientes (freemium) -->
+  <section class="sec stu" id="estudiantes">
+    <div class="wrap stu-grid">
+      <div class="stu-copy">
+        <h2 class="h2">¿Estudias por tu cuenta? Practica con ORBIT.</h2>
+        <p class="lead">Aunque tu universidad todavía no trabaje con nosotros, puedes usar nuestros laboratorios en 3D y libros con Realidad Aumentada desde tu computadora o tu celular.</p>
+        <ul class="stu-points">
+          <li><b>Gratis</b><span>Laboratorios y libros de muestra, sin pagar nada.</span></li>
+          <li><b>Premium, <span data-premium-price data-noi18n>35 Bs</span> al mes</b><span>Todo el catálogo, mes a mes y sin contratos.</span></li>
+        </ul>
+        <div class="cta-row">
+          <a class="btn btn-brand" href="registro.html">Crear cuenta gratis</a>
+          <a class="btn btn-line" href="login.html">Ya tengo cuenta</a>
+        </div>
+      </div>
+      <div class="stu-cat">
+        <p class="stu-cat-title">En el catálogo</p>
+        <ul class="cat" id="catGrid">
+          <li><span class="tags"><span class="tag vr">3D</span></span><b>VentLab</b><span>Ventilador mecánico Dräger Savina 300</span></li>
+          <li><span class="tags"><span class="tag vr">3D</span></span><b>CT Virtual Lab</b><span>Tomógrafo Siemens SOMATOM</span></li>
+          <li><span class="tags"><span class="tag ar">AR</span></span><b>Freud, Jung y Vygotsky</b><span>Libros de psicología con Realidad Aumentada</span></li>
+        </ul>
+        <p class="stu-note">Hoy en 3D desde el navegador; muy pronto también en Realidad Virtual.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modalidades -->
+  <section class="sec" id="modalidades">
+    <div class="wrap">
+      <div class="head">
+        <h2 class="h2">Tres formas de trabajar con nosotros.</h2>
+      </div>
+      <div class="plans three">
+        <article class="plan feat">
+          <h3>Proyecto a medida</h3>
+          <p class="price"><b>Cotización</b><span>según el alcance</span></p>
+          <p>Para instituciones y empresas con una necesidad propia.</p>
+          <ul>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Simuladores de tus equipos</li>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Realidad Aumentada para libros y exposiciones</li>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Capacitación inmersiva para tu personal</li>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Implementación y soporte del equipo ORBIT</li>
+          </ul>
+          <a class="btn btn-brand" href="#contacto">Solicitar cotización</a>
+        </article>
+        <article class="plan">
+          <h3>Licencia institucional</h3>
+          <p class="price"><b>35 Bs</b><span>por estudiante al mes</span></p>
+          <p>Para universidades, institutos y colegios que quieren empezar con lo que ya desarrollamos.</p>
+          <ul>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Acceso a nuestros simuladores y contenidos</li>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Piloto acompañado de un semestre</li>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Soporte directo del equipo ORBIT</li>
+          </ul>
+          <a class="btn btn-line" href="#contacto">Solicitar un piloto</a>
+        </article>
+        <article class="plan">
+          <h3>Estudiantes</h3>
+          <p class="price"><b data-premium-price data-noi18n>35 Bs</b><span>al mes con Premium</span></p>
+          <p>Para quienes estudian por su cuenta, sin depender de su institución.</p>
+          <ul>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Cuenta gratis con contenidos de muestra</li>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Laboratorios en 3D y libros con Realidad Aumentada</li>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Pago mensual por QR o transferencia</li>
+          </ul>
+          <a class="btn btn-line" href="registro.html">Crear cuenta gratis</a>
+        </article>
+      </div>
+      <p class="fine">Precios en bolivianos. Los proyectos a medida se cotizan según su alcance.</p>
+    </div>
+  </section>
+
+  <!-- Preguntas -->
+  <section class="sec" id="preguntas">
+    <div class="wrap faq">
+      <div class="faq-head">
+        <h2 class="h2">Preguntas frecuentes.</h2>
+        <p class="lead">Si tienes otra duda, escríbenos.</p>
+      </div>
+      <div class="faq-list">
+        <details open><summary>¿Pueden desarrollar un simulador de nuestro equipo?<svg aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Sí. Es lo que hacemos: modelamos tu equipo o tu contenido y desarrollamos la experiencia en Realidad Virtual o Aumentada según lo que quieras enseñar.</p></details>
+        <details><summary>¿Cómo se calcula el costo de un proyecto?<svg aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Depende del alcance: cuántos equipos o temas, el nivel de detalle y la plataforma. Antes de empezar te enviamos una propuesta con alcance, plazos y costo.</p></details>
+        <details><summary>¿Necesito visores de Realidad Virtual?<svg aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Para los simuladores en Realidad Virtual, sí: funcionan con visores Meta Quest. Las experiencias de Realidad Aumentada funcionan con un celular.</p></details>
+        <details><summary>¿Para qué áreas sirve?<svg aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Empezamos por carreras de salud y técnicas, donde los equipos son más caros. Desarrollamos para cualquier área y nivel, desde colegio hasta universidad, y también para empresas y museos.</p></details>
+        <details><summary>¿Cómo empieza un piloto?<svg aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Definimos contigo los cursos y los equipos que más necesitas, y acompañamos un semestre de uso midiendo el aprendizaje.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contacto -->
+  <section class="sec contact-sec" id="contacto">
+    <div class="wrap contact">
+      <div class="contact-copy">
+        <h2 class="h2">Cuéntanos tu proyecto.</h2>
+        <p class="lead">Dinos qué quieres enseñar o entrenar. Te respondemos con una propuesta de alcance, plazos y costo.</p>
+        <ul class="cinfo">
+          <li><svg aria-hidden="true"><use href="#i-mail"/></svg><a href="mailto:orbitunivalle@gmail.com" data-noi18n>orbitunivalle@gmail.com</a><button class="copy" type="button" id="copyMail">Copiar</button></li>
+          <li><svg aria-hidden="true"><use href="#i-pin"/></svg><span>Cochabamba, Bolivia</span></li>
+        </ul>
+      </div>
+      <form class="form" id="quoteForm" novalidate>
+        <div class="f"><label for="f-name">Nombre</label><input id="f-name" name="nombre" autocomplete="name" placeholder="Tu nombre" required></div>
+        <div class="f"><label for="f-org">Institución o empresa</label><input id="f-org" name="institucion" autocomplete="organization" placeholder="Nombre de tu institución"></div>
+        <div class="f full"><label for="f-mail">Correo</label><input id="f-mail" name="correo" type="email" autocomplete="email" placeholder="nombre@institucion.edu.bo" required></div>
+        <fieldset class="chips full">
+          <legend>Qué necesitas</legend>
+          <div>
+            <label><input type="radio" name="tipo" value="Simulador en Realidad Virtual" checked><span>Simulador en Realidad Virtual</span></label>
+            <label><input type="radio" name="tipo" value="Realidad Aumentada para libros o materiales"><span>Realidad Aumentada para libros o materiales</span></label>
+            <label><input type="radio" name="tipo" value="Capacitación para empresas"><span>Capacitación para empresas</span></label>
+            <label><input type="radio" name="tipo" value="Laboratorio virtual para colegio"><span>Laboratorio virtual para colegio</span></label>
+            <label><input type="radio" name="tipo" value="Exposición o museo"><span>Exposición o museo</span></label>
+            <label><input type="radio" name="tipo" value="Licencia institucional"><span>Licencia institucional</span></label>
+            <label><input type="radio" name="tipo" value="Otro"><span>Otro</span></label>
+          </div>
+        </fieldset>
+        <div class="hp" aria-hidden="true"><label for="f-web">Sitio web</label><input id="f-web" name="sitio_web" tabindex="-1" autocomplete="off"></div>
+        <div class="f full"><label for="f-msg">Mensaje</label><textarea id="f-msg" name="mensaje" rows="4" placeholder="Por ejemplo: queremos un simulador del ecógrafo de nuestro laboratorio" required></textarea></div>
+        <p class="ferr full" id="formErr" role="alert" hidden></p>
+        <p class="fok full" id="formOk" role="status" hidden></p>
+        <div class="form-foot full">
+          <small>Se abrirá tu correo con la solicitud lista para enviar.</small>
+          <button class="btn btn-brand" type="submit">Enviar solicitud</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr-top">
+      <div class="ftr-brand">
+        <a class="logo" href="#inicio" aria-label="ORBIT, inicio"><svg viewBox="0 0 1964 411" aria-hidden="true"><use href="#logo"/></svg></a>
+        <p>Simuladores de Realidad Virtual y experiencias de Realidad Aumentada a medida.</p>
+      </div>
+      <div class="ftr-cols">
+        <div><h4>Soluciones</h4><ul><li><a href="#soluciones">Simuladores de equipos</a></li><li><a href="#soluciones">Realidad Aumentada</a></li><li><a href="#soluciones">Capacitación para empresas</a></li></ul></div>
+        <div><h4>ORBIT</h4><ul><li><a href="#proyectos">Proyectos</a></li><li><a href="#proceso">Cómo trabajamos</a></li><li><a href="#preguntas">Preguntas frecuentes</a></li><li><a href="login.html">Iniciar sesión</a></li><li><a href="registro.html">Crear cuenta gratis</a></li></ul></div>
+        <div><h4>Contacto</h4><ul><li><a href="mailto:orbitunivalle@gmail.com" data-noi18n>orbitunivalle@gmail.com</a></li><li>Cochabamba, Bolivia</li></ul></div>
+      </div>
+    </div>
+    <div class="ftr-bottom"><span>© 2026 ORBIT</span><a href="#top">Volver arriba</a></div>
+  </div>
+</footer>
+
+<script src="js/main.js" defer></script>
+</body>
+</html>

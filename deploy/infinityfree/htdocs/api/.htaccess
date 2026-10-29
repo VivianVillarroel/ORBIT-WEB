@@ -1,0 +1,5 @@
+# Solo index.php es público. La configuración y el código interno no se sirven.
+<FilesMatch "^config.*\.php$">
+  Require all denied
+</FilesMatch>
+Options -Indexes

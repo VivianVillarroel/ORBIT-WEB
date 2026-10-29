@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Crear cuenta | ORBIT</title>
+<meta name="description" content="Crea tu cuenta gratis en ORBIT y practica con laboratorios 3D y libros con Realidad Aumentada.">
+<meta name="theme-color" content="#F7F6FC">
+<link rel="icon" href="img/orbit-logo.svg" type="image/svg+xml">
+<script>
+  (function () {
+    var t = null; try { t = localStorage.getItem("orbit-theme"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+<link rel="preload" href="fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/styles.css">
+<script>if (location.protocol === "file:") document.write('<link rel="stylesheet" href="css/font-local.css">');</script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 1964 411"><path fill="currentColor" fill-rule="evenodd" d="M281.50 7.10C234.44 12.22 191.31 32.58 158.99 64.97C138.51 85.49 125.88 104.11 115.24 129.50C110.28 141.34 107 151.01 107 153.79C107 155.30 110.10 152 124.66 135C146.60 109.39 173.07 89.54 202.54 76.62C251.70 55.06 310.94 52.23 361.32 69.04C406.98 84.26 449.52 119.38 469.26 158.15C486.47 191.93 486.67 221.58 469.93 255.63C461.20 273.38 447.63 290.33 431.10 304.13C399.66 330.38 361.78 345.95 319.22 350.12C304.34 351.57 270.09 350.69 256 348.49C218.07 342.56 182.65 327.74 153.50 305.62C137.36 293.37 127.21 283.35 106.27 259C105.52 258.13 107.09 264.23 109.74 272.50C125.45 321.40 170.81 368.68 222.31 389.84C275.15 411.55 334.96 409.54 385.29 384.38C404.81 374.62 420.69 363.33 436.35 348.07C452.80 332.05 462.74 319.04 472.82 300.34C483.61 280.29 490.09 261.84 494.16 239.50C497.39 221.82 497.39 186.83 494.17 169.11C488.41 137.40 473.71 104.90 454.57 81.53C446 71.07 429.11 54.52 420 47.64C397.75 30.84 372.01 18.40 346.50 12.12C327.27 7.38 299.03 5.20 281.50 7.10Z M592 206.96L592 382 L620.50 382L649 382 L649 318L649 254 L686.97 254L724.93 254 L746.74 280.25C758.74 294.69 773.27 312.29 779.03 319.36C784.79 326.43 794.59 338.35 800.81 345.86C807.03 353.36 816.26 364.54 821.31 370.70L830.50 381.91 L865.25 381.95C884.36 381.98 900 381.76 900 381.46C900 381.16 897.15 377.45 893.67 373.21C883.96 361.39 846.30 316.34 839.12 307.95C835.60 303.85 829.46 296.68 825.45 292C808.50 272.20 788 247.61 788.01 247.08C788.01 246.76 791.50 245.52 795.76 244.33C832.17 234.12 861.66 207.86 872.50 176.01C878.19 159.28 879.78 136.55 876.47 119.14C871.37 92.31 856.41 69.73 833.50 54.27C820.06 45.20 802.12 38.07 783.46 34.36C775.35 32.75 765.85 32.55 683.25 32.25L592 31.92 L592 206.96Z M753.29 75.02C797.75 78.63 824 103.12 824 141C824 179.29 797.27 205.08 752.50 209.99C746.25 210.67 725.05 210.98 696 210.79L649.50 210.50 L649.24 142.82L648.99 75.14 L651.24 74.75C656.39 73.84 741.62 74.07 753.29 75.02Z M1005 207L1005 382.08 L1109.75 381.72C1201.76 381.40 1215.37 381.16 1221.69 379.74C1261 370.89 1286.81 353.59 1300.47 326.94C1308.45 311.38 1310.43 302.95 1310.43 284.50C1310.43 272.04 1310.05 268.07 1308.15 261.04C1304.69 248.15 1297.90 235.92 1289.11 226.72C1277.71 214.79 1265.93 207.53 1248.93 201.98C1243.79 200.30 1239.42 198.76 1239.21 198.55C1239 198.34 1240.84 197.28 1243.29 196.20C1260.69 188.50 1277.23 171.38 1284.28 153.78C1290.54 138.13 1292.17 114.73 1288.08 99C1279.47 65.83 1254.40 44.21 1213.50 34.69C1204.74 32.65 1201.87 32.58 1104.75 32.26L1005 31.93 L1005 207Z M1192.50 76.40C1215.86 81.71 1232.52 96.45 1235.99 114.89C1239.60 134.06 1234.77 150.39 1221.58 163.59C1213.69 171.49 1206.25 175.61 1193.30 179.24C1185.73 181.37 1183.68 181.44 1123.75 181.77L1062 182.10 L1062 128.72C1062 99.36 1062.33 75.01 1062.72 74.61C1063.12 74.21 1090.68 74.04 1123.97 74.24C1178.08 74.55 1185.35 74.77 1192.50 76.40Z M1208.22 229.22C1228.72 234.81 1243 245.10 1250 259.32C1254.87 269.22 1256.41 276.87 1255.68 287.56C1253.93 313 1236.28 331.91 1206.50 340.21C1198.64 342.40 1197.29 342.45 1130.25 342.77L1062 343.09 L1062 284.49L1062 225.90 L1130.25 226.23L1198.50 226.56 L1208.22 229.22Z M1436.67 32.67C1436.30 33.03 1436 111.78 1436 207.67L1436 382 L1465 382L1494 382 L1494 207L1494 32 L1465.67 32C1450.08 32 1437.03 32.30 1436.67 32.67Z M1609.67 32.66C1609.30 33.03 1609 42.93 1609 54.67L1609 76 L1665.25 76.14C1724.49 76.28 1733.43 76.35 1746.75 76.75L1755 77 L1755 229.50L1755 382 L1783.50 382L1811.99 382 L1812.25 229.25L1812.50 76.50 L1868.50 76.36C1899.30 76.29 1932.05 76.18 1941.27 76.11L1958.04 76 L1957.77 54.25L1957.50 32.50 L1783.92 32.25C1688.45 32.11 1610.04 32.30 1609.67 32.66Z M120.50 201.01C78.04 202.98 18.72 207.69 9 209.86C6.16 210.49 5.88 210.76 7.50 211.25C13.92 213.19 42.30 216.02 80 218.47C122.85 221.26 223.97 222.07 276 220.05C332.66 217.84 397.93 212.60 395.77 210.43C393.86 208.52 350.37 204.90 293.50 201.92C267.82 200.57 144.04 199.92 120.50 201.01Z"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.4 3.6 5.2 3.6 8.5s-1.2 6.1-3.6 8.5c-2.4-2.4-3.6-5.2-3.6-8.5s1.2-6.1 3.6-8.5z"/></g></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></g></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<main class="auth">
+  <aside class="auth-art">
+    <a class="logo" href="index.html" aria-label="ORBIT, inicio"><svg viewBox="0 0 1964 411" aria-hidden="true"><use href="#logo"/></svg></a>
+    <img src="img/ar-celular.webp" alt="" width="900" height="600" decoding="async">
+    <div>
+      <p class="auth-quote">Practica por tu cuenta, a tu ritmo.</p>
+      <ul class="perks">
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg>Laboratorios en 3D desde el navegador</li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg>Libros con Realidad Aumentada</li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg>Empieza gratis; pásate a Premium cuando quieras</li>
+      </ul>
+    </div>
+  </aside>
+
+  <section class="auth-main">
+    <div class="auth-top">
+      <a class="back" href="index.html"><svg aria-hidden="true"><use href="#i-back"/></svg>Volver al inicio</a>
+      <div class="tools">
+        <div class="lang">
+          <button class="tool" type="button" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu" aria-label="Idioma"><svg aria-hidden="true"><use href="#i-globe"/></svg><span class="lang-cur" data-noi18n>ES</span></button>
+          <div class="lang-menu" id="langMenu" hidden data-noi18n>
+            <button type="button" data-lang="es" aria-pressed="true">Español</button>
+            <button type="button" data-lang="en" aria-pressed="false">English</button>
+            <button type="button" data-lang="pt" aria-pressed="false">Português</button>
+          </div>
+        </div>
+        <button class="tool theme-btn" type="button" data-theme-toggle aria-label="Cambiar tema"><svg class="sun" aria-hidden="true"><use href="#i-sun"/></svg><svg class="moon" aria-hidden="true"><use href="#i-moon"/></svg></button>
+      </div>
+    </div>
+
+    <div class="auth-box">
+      <a class="logo" href="index.html" aria-label="ORBIT, inicio"><svg viewBox="0 0 1964 411" aria-hidden="true"><use href="#logo"/></svg></a>
+      <h1>Crea tu cuenta gratis</h1>
+      <p class="sub">Para estudiantes que aprenden por su cuenta. Si tu universidad trabaja con ORBIT, ya tienes una cuenta: <a href="login.html">inicia sesión</a>.</p>
+      <form class="lform" id="rgForm" novalidate>
+        <div class="lrow2">
+          <div class="lf"><label for="r-nom">Nombre</label><input id="r-nom" autocomplete="given-name" placeholder="Tu nombre"></div>
+          <div class="lf"><label for="r-ape">Apellido</label><input id="r-ape" autocomplete="family-name" placeholder="Tu apellido"></div>
+        </div>
+        <div class="lf"><label for="r-mail">Correo</label><input id="r-mail" type="email" autocomplete="email" inputmode="email" placeholder="nombre@correo.com"></div>
+        <div class="lf"><label for="r-pass">Contraseña</label><input id="r-pass" type="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres"></div>
+        <p class="lmsg" id="rmsg" role="status" hidden></p>
+        <button class="btn btn-brand" type="submit" id="rgSubmit">Crear cuenta</button>
+      </form>
+      <p class="alt">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+    </div>
+
+    <p class="auth-foot">© 2026 ORBIT</p>
+  </section>
+</main>
+
+<script src="js/main.js" defer></script>
+</body>
+</html>

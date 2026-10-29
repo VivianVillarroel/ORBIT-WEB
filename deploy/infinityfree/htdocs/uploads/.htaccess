@@ -1,0 +1,7 @@
+# Aquí solo hay modelos 3D e imágenes: nunca se ejecuta código.
+Options -Indexes
+<FilesMatch "\.(php|phtml|phar|pl|py|cgi|sh)$">
+  Require all denied
+</FilesMatch>
+AddType model/gltf-binary .glb
+AddType model/gltf+json .gltf

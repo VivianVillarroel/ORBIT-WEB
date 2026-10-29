@@ -1,0 +1,3 @@
+<?php
+require __DIR__.'/../orbit-web/api/lib/bootstrap.php';$f=json_decode(getenv('ORBIT_TEST_CLEANUP'),true);db()->beginTransaction();
+try{if($f['clase']){q('DELETE ct FROM certificados ct JOIN inscripciones i ON i.id=ct.inscripcion_id WHERE i.clase_id=?',[$f['clase']]);q('DELETE FROM practicas WHERE clase_id=?',[$f['clase']]);q('DELETE FROM clases WHERE id=?',[$f['clase']]);}if($f['lab'])q('DELETE FROM laboratorios WHERE id=?',[$f['lab']]);foreach($f['usuarios'] as $id)q('DELETE FROM usuarios WHERE id=?',[$id]);db()->commit();echo "TEST_FIXTURES_REMOVED\n";}catch(Throwable $e){db()->rollBack();throw $e;}

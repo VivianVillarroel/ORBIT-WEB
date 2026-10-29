@@ -1,0 +1,6 @@
+<IfModule mod_headers.c>
+<FilesMatch "\.wasm\.gz$">
+  ForceType application/wasm
+  Header set Content-Encoding gzip
+</FilesMatch>
+</IfModule>

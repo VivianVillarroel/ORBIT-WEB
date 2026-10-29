@@ -1,0 +1,475 @@
+[Wed Oct 21 01:11:47 2026] PHP 8.2.12 Development Server (http://localhost:8097) started
+[Wed Oct 21 01:11:57 2026] [::1]:64367 Accepted
+[Wed Oct 21 01:11:57 2026] [::1]:64367 [200]: GET /
+[Wed Oct 21 01:11:57 2026] [::1]:64367 Closing
+[Wed Oct 21 01:11:57 2026] [::1]:52959 Accepted
+[Wed Oct 21 01:11:57 2026] [::1]:54992 Accepted
+[Wed Oct 21 01:11:57 2026] [::1]:50060 Accepted
+[Wed Oct 21 01:11:57 2026] [::1]:52959 [200]: GET /landing/css/styles.css?v=1
+[Wed Oct 21 01:11:57 2026] [::1]:54992 [200]: GET /landing/img/hero-ar-tablet.jpg
+[Wed Oct 21 01:11:57 2026] [::1]:50060 [200]: GET /landing/img/producto-ventilador.webp
+[Wed Oct 21 01:11:57 2026] [::1]:61179 Accepted
+[Wed Oct 21 01:11:57 2026] [::1]:55016 Accepted
+[Wed Oct 21 01:11:57 2026] [::1]:61179 [200]: GET /landing/js/i18n.js?v=1
+[Wed Oct 21 01:11:57 2026] [::1]:55016 [200]: GET /landing/js/main.js?v=1
+[Wed Oct 21 01:11:57 2026] [::1]:52959 Closing
+[Wed Oct 21 01:11:57 2026] [::1]:50060 Closing
+[Wed Oct 21 01:11:57 2026] [::1]:54992 Closing
+[Wed Oct 21 01:11:57 2026] [::1]:61179 Closing
+[Wed Oct 21 01:11:57 2026] [::1]:55016 Closing
+[Wed Oct 21 01:11:58 2026] [::1]:63813 Accepted
+[Wed Oct 21 01:11:58 2026] [::1]:63813 [404]: GET /favicon.ico - No such file or directory
+[Wed Oct 21 01:11:58 2026] [::1]:63813 Closing
+[Wed Oct 21 01:12:48 2026] [::1]:63918 Accepted
+[Wed Oct 21 01:12:48 2026] [::1]:63918 [200]: GET /
+[Wed Oct 21 01:12:48 2026] [::1]:63918 Closing
+[Wed Oct 21 01:12:48 2026] [::1]:55222 Accepted
+[Wed Oct 21 01:12:48 2026] [::1]:52346 Accepted
+[Wed Oct 21 01:12:48 2026] [::1]:49228 Accepted
+[Wed Oct 21 01:12:48 2026] [::1]:64338 Accepted
+[Wed Oct 21 01:12:48 2026] [::1]:55222 [200]: GET /landing/css/styles.css?v=1
+[Wed Oct 21 01:12:48 2026] [::1]:52346 [200]: GET /landing/img/hero-ar-tablet.jpg
+[Wed Oct 21 01:12:48 2026] [::1]:49228 [200]: GET /landing/img/producto-ventilador.webp
+[Wed Oct 21 01:12:48 2026] [::1]:64338 [200]: GET /landing/js/i18n.js?v=1
+[Wed Oct 21 01:12:48 2026] [::1]:55222 Closing
+[Wed Oct 21 01:12:48 2026] [::1]:49228 Closing
+[Wed Oct 21 01:12:48 2026] [::1]:64338 Closing
+[Wed Oct 21 01:12:48 2026] [::1]:52346 Closing
+[Wed Oct 21 01:12:48 2026] [::1]:49666 Accepted
+[Wed Oct 21 01:12:49 2026] [::1]:49666 [200]: GET /landing/js/main.js?v=1
+[Wed Oct 21 01:12:49 2026] [::1]:49666 Closing
+[Wed Oct 21 01:13:05 2026] [::1]:65041 Accepted
+[Wed Oct 21 01:13:05 2026] [::1]:65041 [200]: GET /landing/img/estudiante-visor.jpg
+[Wed Oct 21 01:13:05 2026] [::1]:65041 Closing
+[Wed Oct 21 01:13:11 2026] [::1]:58914 Accepted
+[Wed Oct 21 01:13:12 2026] [::1]:58914 [200]: POST /api/index.php?r=auth/login
+[Wed Oct 21 01:13:12 2026] [::1]:58914 Closing
+[Wed Oct 21 01:13:12 2026] [::1]:60445 Accepted
+[Wed Oct 21 01:13:12 2026] [::1]:60445 [200]: GET /panel.html
+[Wed Oct 21 01:13:12 2026] [::1]:60445 Closing
+[Wed Oct 21 01:13:12 2026] [::1]:59605 Accepted
+[Wed Oct 21 01:13:12 2026] [::1]:59605 [200]: GET /fonts/archivo-var.woff2
+[Wed Oct 21 01:13:12 2026] [::1]:60991 Accepted
+[Wed Oct 21 01:13:12 2026] [::1]:54544 Accepted
+[Wed Oct 21 01:13:12 2026] [::1]:60991 [200]: GET /css/styles.css?v=2
+[Wed Oct 21 01:13:12 2026] [::1]:57208 Accepted
+[Wed Oct 21 01:13:12 2026] [::1]:54544 [200]: GET /css/panel.css?v=3
+[Wed Oct 21 01:13:12 2026] [::1]:59605 Closing
+[Wed Oct 21 01:13:12 2026] [::1]:57208 [200]: GET /js/panel.js?v=3
+[Wed Oct 21 01:13:12 2026] [::1]:60991 Closing
+[Wed Oct 21 01:13:12 2026] [::1]:54544 Closing
+[Wed Oct 21 01:13:12 2026] [::1]:57208 Closing
+[Wed Oct 21 01:13:12 2026] [::1]:59529 Accepted
+[Wed Oct 21 01:13:12 2026] [::1]:59529 [200]: GET /api/index.php?r=auth/me
+[Wed Oct 21 01:13:12 2026] [::1]:59529 Closing
+[Wed Oct 21 01:13:12 2026] [::1]:58660 Accepted
+[Wed Oct 21 01:13:12 2026] [::1]:58660 [200]: GET /img/orbit-logo.svg
+[Wed Oct 21 01:13:12 2026] [::1]:49666 Accepted
+[Wed Oct 21 01:13:12 2026] [::1]:49666 [200]: GET /api/index.php?r=opciones
+[Wed Oct 21 01:13:12 2026] [::1]:49666 Closing
+[Wed Oct 21 01:13:12 2026] [::1]:58660 Closing
+[Wed Oct 21 01:13:12 2026] [::1]:64810 Accepted
+[Wed Oct 21 01:13:12 2026] [::1]:64810 [200]: GET /api/index.php?r=academico
+[Wed Oct 21 01:13:12 2026] [::1]:64810 Closing
+[Wed Oct 21 01:13:29 2026] [::1]:52175 Accepted
+[Wed Oct 21 01:13:29 2026] [::1]:52175 [200]: GET /
+[Wed Oct 21 01:13:29 2026] [::1]:52175 Closing
+[Wed Oct 21 01:13:29 2026] [::1]:52933 Accepted
+[Wed Oct 21 01:13:29 2026] [::1]:52933 [200]: GET /landing/css/styles.css?v=1
+[Wed Oct 21 01:13:29 2026] [::1]:51793 Accepted
+[Wed Oct 21 01:13:29 2026] [::1]:53588 Accepted
+[Wed Oct 21 01:13:29 2026] [::1]:64090 Accepted
+[Wed Oct 21 01:13:29 2026] [::1]:52933 Closing
+[Wed Oct 21 01:13:29 2026] [::1]:51793 [200]: GET /landing/img/hero-ar-tablet.jpg
+[Wed Oct 21 01:13:29 2026] [::1]:53588 [200]: GET /landing/img/producto-ventilador.webp
+[Wed Oct 21 01:13:29 2026] [::1]:64090 [200]: GET /landing/js/i18n.js?v=1
+[Wed Oct 21 01:13:29 2026] [::1]:53588 Closing
+[Wed Oct 21 01:13:29 2026] [::1]:64090 Closing
+[Wed Oct 21 01:13:29 2026] [::1]:51793 Closing
+[Wed Oct 21 01:13:29 2026] [::1]:60782 Accepted
+[Wed Oct 21 01:13:29 2026] [::1]:60782 [200]: GET /landing/js/main.js?v=1
+[Wed Oct 21 01:13:29 2026] [::1]:60782 Closing
+[Wed Oct 21 01:13:30 2026] [::1]:51883 Accepted
+[Wed Oct 21 01:13:30 2026] [::1]:58602 Accepted
+[Wed Oct 21 01:13:30 2026] [::1]:52956 Accepted
+[Wed Oct 21 01:13:30 2026] [::1]:51883 [200]: GET /landing/img/logo-univalle.png
+[Wed Oct 21 01:13:30 2026] [::1]:58602 [200]: GET /landing/img/logo-emprender-futuro.png
+[Wed Oct 21 01:13:30 2026] [::1]:52956 [200]: GET /landing/img/logo-vcilat.png
+[Wed Oct 21 01:13:30 2026] [::1]:58602 Closing
+[Wed Oct 21 01:13:30 2026] [::1]:51883 Closing
+[Wed Oct 21 01:13:30 2026] [::1]:52956 Closing
+[Wed Oct 21 01:13:30 2026] [::1]:54630 Accepted
+[Wed Oct 21 01:13:30 2026] [::1]:54630 [201]: POST /api/index.php?r=solicitudes
+[Wed Oct 21 01:13:30 2026] [::1]:54630 Closing
+[Wed Oct 21 01:14:13 2026] [::1]:51111 Accepted
+[Wed Oct 21 01:14:13 2026] [::1]:51111 [200]: GET /
+[Wed Oct 21 01:14:13 2026] [::1]:51111 Closing
+[Wed Oct 21 01:14:13 2026] [::1]:57445 Accepted
+[Wed Oct 21 01:14:13 2026] [::1]:53056 Accepted
+[Wed Oct 21 01:14:13 2026] [::1]:57445 [200]: GET /landing/css/styles.css?v=1
+[Wed Oct 21 01:14:13 2026] [::1]:60029 Accepted
+[Wed Oct 21 01:14:13 2026] [::1]:53056 [200]: GET /landing/img/hero-ar-tablet.jpg
+[Wed Oct 21 01:14:13 2026] [::1]:55580 Accepted
+[Wed Oct 21 01:14:13 2026] [::1]:60029 [200]: GET /landing/img/producto-ventilador.webp
+[Wed Oct 21 01:14:13 2026] [::1]:55580 [200]: GET /landing/js/i18n.js?v=1
+[Wed Oct 21 01:14:14 2026] [::1]:57445 Closing
+[Wed Oct 21 01:14:14 2026] [::1]:53056 Closing
+[Wed Oct 21 01:14:14 2026] [::1]:60029 Closing
+[Wed Oct 21 01:14:14 2026] [::1]:55580 Closing
+[Wed Oct 21 01:14:14 2026] [::1]:50186 Accepted
+[Wed Oct 21 01:14:14 2026] [::1]:50186 [200]: GET /landing/js/main.js?v=1
+[Wed Oct 21 01:14:14 2026] [::1]:50186 Closing
+[Wed Oct 21 01:14:14 2026] [::1]:60110 Accepted
+[Wed Oct 21 01:14:14 2026] [::1]:64553 Accepted
+[Wed Oct 21 01:14:14 2026] [::1]:55126 Accepted
+[Wed Oct 21 01:14:14 2026] [::1]:60110 [200]: GET /landing/img/logo-univalle.png
+[Wed Oct 21 01:14:14 2026] [::1]:64553 [200]: GET /landing/img/logo-emprender-futuro.png
+[Wed Oct 21 01:14:14 2026] [::1]:55126 [200]: GET /landing/img/logo-vcilat.png
+[Wed Oct 21 01:14:14 2026] [::1]:64553 Closing
+[Wed Oct 21 01:14:14 2026] [::1]:60110 Closing
+[Wed Oct 21 01:14:14 2026] [::1]:55126 Closing
+[Wed Oct 21 01:14:22 2026] [::1]:59433 Accepted
+[Wed Oct 21 01:14:22 2026] [::1]:59433 [200]: GET /landing/img/doctora-vr.jpg
+[Wed Oct 21 01:14:22 2026] [::1]:59433 Closing
+[Wed Oct 21 01:14:22 2026] [::1]:58892 Accepted
+[Wed Oct 21 01:14:22 2026] [::1]:58892 [200]: GET /landing/img/aula-universidad.jpg
+[Wed Oct 21 01:14:22 2026] [::1]:58892 Closing
+[Wed Oct 21 01:14:23 2026] [::1]:53956 Accepted
+[Wed Oct 21 01:14:23 2026] [::1]:53956 [200]: GET /landing/img/producto-ar.webp
+[Wed Oct 21 01:14:23 2026] [::1]:50513 Accepted
+[Wed Oct 21 01:14:23 2026] [::1]:50513 [200]: GET /landing/img/orbit-plataforma.png
+[Wed Oct 21 01:14:23 2026] [::1]:53956 Closing
+[Wed Oct 21 01:14:23 2026] [::1]:59165 Accepted
+[Wed Oct 21 01:14:23 2026] [::1]:50513 Closing
+[Wed Oct 21 01:14:23 2026] [::1]:59165 [200]: GET /landing/img/producto-tomografo.webp
+[Wed Oct 21 01:14:23 2026] [::1]:59165 Closing
+[Wed Oct 21 01:15:56 2026] [::1]:61530 Accepted
+[Wed Oct 21 01:15:56 2026] [::1]:61530 [200]: GET /
+[Wed Oct 21 01:15:56 2026] [::1]:61530 Closing
+[Wed Oct 21 01:15:56 2026] [::1]:61477 Accepted
+[Wed Oct 21 01:15:56 2026] [::1]:51248 Accepted
+[Wed Oct 21 01:15:56 2026] [::1]:51160 Accepted
+[Wed Oct 21 01:15:56 2026] [::1]:62915 Accepted
+[Wed Oct 21 01:15:56 2026] [::1]:61477 [200]: GET /landing/css/styles.css?v=1
+[Wed Oct 21 01:15:56 2026] [::1]:51248 [200]: GET /landing/img/hero-ar-tablet.jpg
+[Wed Oct 21 01:15:56 2026] [::1]:51160 [200]: GET /landing/img/producto-ventilador.webp
+[Wed Oct 21 01:15:56 2026] [::1]:62915 [200]: GET /landing/js/i18n.js?v=1
+[Wed Oct 21 01:15:56 2026] [::1]:61477 Closing
+[Wed Oct 21 01:15:56 2026] [::1]:51160 Closing
+[Wed Oct 21 01:15:56 2026] [::1]:62915 Closing
+[Wed Oct 21 01:15:56 2026] [::1]:51248 Closing
+[Wed Oct 21 01:15:56 2026] [::1]:55280 Accepted
+[Wed Oct 21 01:15:56 2026] [::1]:55280 [200]: GET /landing/js/main.js?v=1
+[Wed Oct 21 01:15:56 2026] [::1]:55280 Closing
+[Wed Oct 21 01:16:35 2026] [::1]:49712 Accepted
+[Wed Oct 21 01:16:35 2026] [::1]:49712 [200]: GET /
+[Wed Oct 21 01:16:35 2026] [::1]:49712 Closing
+[Wed Oct 21 01:16:35 2026] [::1]:61809 Accepted
+[Wed Oct 21 01:16:35 2026] [::1]:61809 [200]: GET /landing/css/styles.css?v=1
+[Wed Oct 21 01:16:35 2026] [::1]:65369 Accepted
+[Wed Oct 21 01:16:35 2026] [::1]:61809 Closing
+[Wed Oct 21 01:16:35 2026] [::1]:62783 Accepted
+[Wed Oct 21 01:16:35 2026] [::1]:55649 Accepted
+[Wed Oct 21 01:16:35 2026] [::1]:65369 [200]: GET /landing/img/hero-ar-tablet.jpg
+[Wed Oct 21 01:16:35 2026] [::1]:62783 [200]: GET /landing/js/i18n.js?v=1
+[Wed Oct 21 01:16:35 2026] [::1]:55649 [200]: GET /landing/img/producto-ventilador.webp
+[Wed Oct 21 01:16:35 2026] [::1]:65369 Closing
+[Wed Oct 21 01:16:35 2026] [::1]:62783 Closing
+[Wed Oct 21 01:16:35 2026] [::1]:55649 Closing
+[Wed Oct 21 01:16:35 2026] [::1]:55492 Accepted
+[Wed Oct 21 01:16:35 2026] [::1]:55492 [200]: GET /landing/js/main.js?v=1
+[Wed Oct 21 01:16:35 2026] [::1]:55492 Closing
+[Wed Oct 21 01:16:36 2026] [::1]:63613 Accepted
+[Wed Oct 21 01:16:36 2026] [::1]:63613 [404]: GET /favicon.ico - No such file or directory
+[Wed Oct 21 01:16:36 2026] [::1]:63613 Closing
+[Wed Oct 21 01:16:38 2026] [::1]:62630 Accepted
+[Wed Oct 21 01:16:38 2026] [::1]:57931 Accepted
+[Wed Oct 21 01:16:38 2026] [::1]:62630 [200]: GET /landing/img/producto-tomografo.webp
+[Wed Oct 21 01:16:38 2026] [::1]:57931 [200]: GET /landing/img/producto-ar.webp
+[Wed Oct 21 01:16:38 2026] [::1]:62630 Closing
+[Wed Oct 21 01:16:38 2026] [::1]:57931 Closing
+[Wed Oct 21 01:16:40 2026] [::1]:61839 Accepted
+[Wed Oct 21 01:16:40 2026] [::1]:61839 [200]: GET /landing/img/orbit-plataforma.png
+[Wed Oct 21 01:16:40 2026] [::1]:61839 Closing
+[Wed Oct 21 01:16:42 2026] [::1]:54332 Accepted
+[Wed Oct 21 01:16:42 2026] [::1]:54332 [200]: GET /landing/img/aula-universidad.jpg
+[Wed Oct 21 01:16:42 2026] [::1]:54332 Closing
+[Wed Oct 21 01:16:42 2026] [::1]:59090 Accepted
+[Wed Oct 21 01:16:42 2026] [::1]:59090 [200]: GET /landing/img/doctora-vr.jpg
+[Wed Oct 21 01:16:42 2026] [::1]:59090 Closing
+[Wed Oct 21 01:16:47 2026] [::1]:52323 Accepted
+[Wed Oct 21 01:16:47 2026] [::1]:52323 [200]: GET /landing/img/logo-vcilat.png
+[Wed Oct 21 01:16:47 2026] [::1]:57195 Accepted
+[Wed Oct 21 01:16:47 2026] [::1]:52323 Closing
+[Wed Oct 21 01:16:47 2026] [::1]:62813 Accepted
+[Wed Oct 21 01:16:47 2026] [::1]:57195 [200]: GET /landing/img/logo-univalle.png
+[Wed Oct 21 01:16:47 2026] [::1]:62813 [200]: GET /landing/img/logo-emprender-futuro.png
+[Wed Oct 21 01:16:47 2026] [::1]:57195 Closing
+[Wed Oct 21 01:16:47 2026] [::1]:62813 Closing
+[Wed Oct 21 01:16:51 2026] [::1]:52082 Accepted
+[Wed Oct 21 01:16:51 2026] [::1]:52082 [200]: GET /landing/img/estudiante-visor.jpg
+[Wed Oct 21 01:16:51 2026] [::1]:52082 Closing
+[Wed Oct 21 01:17:27 2026] [::1]:55119 Accepted
+[Wed Oct 21 01:17:27 2026] [::1]:55119 [200]: GET /
+[Wed Oct 21 01:17:27 2026] [::1]:61462 Accepted
+[Wed Oct 21 01:17:27 2026] [::1]:55119 Closing
+[Wed Oct 21 01:17:27 2026] [::1]:61462 [200]: GET /landing/css/styles.css?v=1
+[Wed Oct 21 01:17:27 2026] [::1]:62153 Accepted
+[Wed Oct 21 01:17:27 2026] [::1]:62153 [200]: GET /landing/img/hero-ar-tablet.jpg
+[Wed Oct 21 01:17:27 2026] [::1]:52565 Accepted
+[Wed Oct 21 01:17:27 2026] [::1]:61462 Closing
+[Wed Oct 21 01:17:27 2026] [::1]:52407 Accepted
+[Wed Oct 21 01:17:27 2026] [::1]:52565 [200]: GET /landing/js/i18n.js?v=1
+[Wed Oct 21 01:17:27 2026] [::1]:61321 Accepted
+[Wed Oct 21 01:17:27 2026] [::1]:52407 [200]: GET /landing/img/producto-ventilador.webp
+[Wed Oct 21 01:17:27 2026] [::1]:61321 [200]: GET /landing/js/main.js?v=2
+[Wed Oct 21 01:17:27 2026] [::1]:62153 Closing
+[Wed Oct 21 01:17:27 2026] [::1]:52565 Closing
+[Wed Oct 21 01:17:27 2026] [::1]:52407 Closing
+[Wed Oct 21 01:17:27 2026] [::1]:61321 Closing
+[Wed Oct 21 01:17:28 2026] [::1]:57932 Accepted
+[Wed Oct 21 01:17:28 2026] [::1]:57932 [404]: GET /favicon.ico - No such file or directory
+[Wed Oct 21 01:17:28 2026] [::1]:57932 Closing
+[Wed Oct 21 01:17:29 2026] [::1]:60547 Accepted
+[Wed Oct 21 01:17:29 2026] [::1]:59421 Accepted
+[Wed Oct 21 01:17:29 2026] [::1]:60547 [200]: GET /landing/img/producto-tomografo.webp
+[Wed Oct 21 01:17:29 2026] [::1]:59421 [200]: GET /landing/img/producto-ar.webp
+[Wed Oct 21 01:17:29 2026] [::1]:60547 Closing
+[Wed Oct 21 01:17:29 2026] [::1]:59421 Closing
+[Wed Oct 21 01:17:30 2026] [::1]:62489 Accepted
+[Wed Oct 21 01:17:30 2026] [::1]:62489 [200]: GET /landing/img/orbit-plataforma.png
+[Wed Oct 21 01:17:30 2026] [::1]:62489 Closing
+[Wed Oct 21 01:17:30 2026] [::1]:59376 Accepted
+[Wed Oct 21 01:17:30 2026] [::1]:59376 [200]: GET /landing/img/aula-universidad.jpg
+[Wed Oct 21 01:17:30 2026] [::1]:59376 Closing
+[Wed Oct 21 01:17:30 2026] [::1]:54366 Accepted
+[Wed Oct 21 01:17:30 2026] [::1]:54366 [200]: GET /landing/img/doctora-vr.jpg
+[Wed Oct 21 01:17:30 2026] [::1]:54366 Closing
+[Wed Oct 21 01:17:31 2026] [::1]:53262 Accepted
+[Wed Oct 21 01:17:31 2026] [::1]:53262 [200]: GET /
+[Wed Oct 21 01:17:31 2026] [::1]:53262 Closing
+[Wed Oct 21 01:17:32 2026] [::1]:60704 Accepted
+[Wed Oct 21 01:17:32 2026] [::1]:60704 [200]: GET /landing/img/logo-univalle.png
+[Wed Oct 21 01:17:32 2026] [::1]:60704 Closing
+[Wed Oct 21 01:17:32 2026] [::1]:49667 Accepted
+[Wed Oct 21 01:17:32 2026] [::1]:49667 [200]: GET /landing/img/logo-emprender-futuro.png
+[Wed Oct 21 01:17:32 2026] [::1]:49667 Closing
+[Wed Oct 21 01:17:32 2026] [::1]:64831 Accepted
+[Wed Oct 21 01:17:32 2026] [::1]:61638 Accepted
+[Wed Oct 21 01:17:32 2026] [::1]:64831 [200]: GET /landing/img/logo-vcilat.png
+[Wed Oct 21 01:17:32 2026] [::1]:61638 [200]: GET /landing/css/styles.css?v=1
+[Wed Oct 21 01:17:32 2026] [::1]:58003 Accepted
+[Wed Oct 21 01:17:32 2026] [::1]:56969 Accepted
+[Wed Oct 21 01:17:32 2026] [::1]:64831 Closing
+[Wed Oct 21 01:17:32 2026] [::1]:58003 [200]: GET /landing/img/hero-ar-tablet.jpg
+[Wed Oct 21 01:17:32 2026] [::1]:56969 [200]: GET /landing/img/producto-ventilador.webp
+[Wed Oct 21 01:17:32 2026] [::1]:61638 Closing
+[Wed Oct 21 01:17:32 2026] [::1]:52149 Accepted
+[Wed Oct 21 01:17:32 2026] [::1]:56969 Closing
+[Wed Oct 21 01:17:32 2026] [::1]:52149 [200]: GET /landing/js/i18n.js?v=1
+[Wed Oct 21 01:17:32 2026] [::1]:58003 Closing
+[Wed Oct 21 01:17:32 2026] [::1]:52149 Closing
+[Wed Oct 21 01:17:32 2026] [::1]:61471 Accepted
+[Wed Oct 21 01:17:32 2026] [::1]:61471 [200]: GET /landing/js/main.js?v=2
+[Wed Oct 21 01:17:32 2026] [::1]:61471 Closing
+[Wed Oct 21 01:17:42 2026] [::1]:53076 Accepted
+[Wed Oct 21 01:17:42 2026] [::1]:53076 [200]: GET /landing/img/estudiante-visor.jpg
+[Wed Oct 21 01:17:42 2026] [::1]:53076 Closing
+[Wed Oct 21 01:17:54 2026] [::1]:62624 Accepted
+[Wed Oct 21 01:17:54 2026] [::1]:62624 [200]: GET /landing/img/estudiante-visor.jpg
+[Wed Oct 21 01:17:54 2026] [::1]:62624 Closing
+[Wed Oct 21 01:18:04 2026] [::1]:60531 Accepted
+[Wed Oct 21 01:18:04 2026] [::1]:60531 [200]: POST /api/index.php?r=auth/login
+[Wed Oct 21 01:18:04 2026] [::1]:60531 Closing
+[Wed Oct 21 01:18:04 2026] [::1]:55790 Accepted
+[Wed Oct 21 01:18:04 2026] [::1]:51345 Accepted
+[Wed Oct 21 01:18:04 2026] [::1]:55790 [200]: GET /panel.html
+[Wed Oct 21 01:18:04 2026] [::1]:55790 Closing
+[Wed Oct 21 01:18:04 2026] [::1]:51345 [200]: GET /fonts/archivo-var.woff2
+[Wed Oct 21 01:18:04 2026] [::1]:51345 Closing
+[Wed Oct 21 01:18:04 2026] [::1]:58413 Accepted
+[Wed Oct 21 01:18:04 2026] [::1]:58413 [200]: GET /css/styles.css?v=2
+[Wed Oct 21 01:18:04 2026] [::1]:57985 Accepted
+[Wed Oct 21 01:18:04 2026] [::1]:57985 [200]: GET /css/panel.css?v=3
+[Wed Oct 21 01:18:04 2026] [::1]:58413 Closing
+[Wed Oct 21 01:18:04 2026] [::1]:57985 Closing
+[Wed Oct 21 01:18:04 2026] [::1]:56492 Accepted
+[Wed Oct 21 01:18:04 2026] [::1]:56492 [200]: GET /js/panel.js?v=3
+[Wed Oct 21 01:18:04 2026] [::1]:56492 Closing
+[Wed Oct 21 01:18:04 2026] [::1]:51315 Accepted
+[Wed Oct 21 01:18:04 2026] [::1]:51315 [200]: GET /api/index.php?r=auth/me
+[Wed Oct 21 01:18:04 2026] [::1]:51315 Closing
+[Wed Oct 21 01:18:04 2026] [::1]:64629 Accepted
+[Wed Oct 21 01:18:04 2026] [::1]:64629 [200]: GET /img/orbit-logo.svg
+[Wed Oct 21 01:18:04 2026] [::1]:64629 Closing
+[Wed Oct 21 01:18:04 2026] [::1]:54155 Accepted
+[Wed Oct 21 01:18:04 2026] [::1]:54155 [200]: GET /api/index.php?r=opciones
+[Wed Oct 21 01:18:04 2026] [::1]:54155 Closing
+[Wed Oct 21 01:18:04 2026] [::1]:53904 Accepted
+[Wed Oct 21 01:18:04 2026] [::1]:63680 Accepted
+[Wed Oct 21 01:18:04 2026] [::1]:53904 [200]: GET /api/index.php?r=dashboard
+[Wed Oct 21 01:18:04 2026] [::1]:53904 Closing
+[Wed Oct 21 01:18:04 2026] [::1]:63680 [200]: GET /api/index.php?r=academico
+[Wed Oct 21 01:18:04 2026] [::1]:63680 Closing
+[Wed Oct 21 01:18:04 2026] [::1]:64046 Accepted
+[Wed Oct 21 01:18:04 2026] [::1]:64046 [200]: GET /api/index.php?r=dashboard
+[Wed Oct 21 01:18:04 2026] [::1]:64046 Closing
+[Wed Oct 21 01:18:06 2026] [::1]:53656 Accepted
+[Wed Oct 21 01:18:06 2026] [::1]:53656 [200]: GET /api/index.php?r=academico
+[Wed Oct 21 01:18:06 2026] [::1]:53656 Closing
+[Wed Oct 21 01:18:06 2026] [::1]:55001 Accepted
+[Wed Oct 21 01:18:06 2026] [::1]:55001 [200]: GET /api/index.php?r=dashboard
+[Wed Oct 21 01:18:06 2026] [::1]:55001 Closing
+[Wed Oct 21 01:18:07 2026] [::1]:57382 Accepted
+[Wed Oct 21 01:18:07 2026] [::1]:57382 [200]: GET /api/index.php?r=academico
+[Wed Oct 21 01:18:07 2026] [::1]:57382 Closing
+[Wed Oct 21 01:18:08 2026] [::1]:62490 Accepted
+[Wed Oct 21 01:18:08 2026] [::1]:62490 [200]: GET /api/index.php?r=universidades
+[Wed Oct 21 01:18:08 2026] [::1]:62490 Closing
+[Wed Oct 21 01:18:08 2026] [::1]:61660 Accepted
+[Wed Oct 21 01:18:08 2026] [::1]:61660 [200]: GET /api/index.php?r=carreras
+[Wed Oct 21 01:18:08 2026] [::1]:61660 Closing
+[Wed Oct 21 01:18:09 2026] [::1]:59774 Accepted
+[Wed Oct 21 01:18:09 2026] [::1]:59774 [200]: GET /api/index.php?r=solicitudes
+[Wed Oct 21 01:18:09 2026] [::1]:59774 Closing
+[Wed Oct 21 01:18:10 2026] [::1]:58851 Accepted
+[Wed Oct 21 01:18:10 2026] [::1]:58851 [200]: GET /api/index.php?r=planes
+[Wed Oct 21 01:18:10 2026] [::1]:58851 Closing
+[Wed Oct 21 01:18:11 2026] [::1]:61488 Accepted
+[Wed Oct 21 01:18:11 2026] [::1]:61488 [200]: GET /api/index.php?r=solicitudes
+[Wed Oct 21 01:18:11 2026] [::1]:61488 Closing
+[Wed Oct 21 01:18:52 2026] [::1]:63322 Accepted
+[Wed Oct 21 01:18:52 2026] [::1]:63322 [200]: GET /
+[Wed Oct 21 01:18:52 2026] [::1]:63322 Closing
+[Wed Oct 21 01:18:52 2026] [::1]:49891 Accepted
+[Wed Oct 21 01:18:52 2026] [::1]:49891 [200]: GET /landing/css/styles.css?v=2
+[Wed Oct 21 01:18:52 2026] [::1]:54274 Accepted
+[Wed Oct 21 01:18:52 2026] [::1]:61814 Accepted
+[Wed Oct 21 01:18:52 2026] [::1]:64715 Accepted
+[Wed Oct 21 01:18:52 2026] [::1]:49891 Closing
+[Wed Oct 21 01:18:52 2026] [::1]:54274 [200]: GET /landing/img/hero-ar-tablet.jpg
+[Wed Oct 21 01:18:52 2026] [::1]:61814 [200]: GET /landing/img/producto-ventilador.webp
+[Wed Oct 21 01:18:52 2026] [::1]:64715 [200]: GET /landing/js/i18n.js?v=1
+[Wed Oct 21 01:18:52 2026] [::1]:61814 Closing
+[Wed Oct 21 01:18:52 2026] [::1]:54274 Closing
+[Wed Oct 21 01:18:52 2026] [::1]:64715 Closing
+[Wed Oct 21 01:18:52 2026] [::1]:55938 Accepted
+[Wed Oct 21 01:18:52 2026] [::1]:55938 [200]: GET /landing/js/main.js?v=2
+[Wed Oct 21 01:18:52 2026] [::1]:55938 Closing
+[Wed Oct 21 01:19:04 2026] [::1]:54024 Accepted
+[Wed Oct 21 01:19:04 2026] [::1]:54090 Accepted
+[Wed Oct 21 01:19:04 2026] [::1]:54024 [200]: GET /landing/img/producto-tomografo.webp
+[Wed Oct 21 01:19:04 2026] [::1]:54090 [200]: GET /landing/img/producto-ar.webp
+[Wed Oct 21 01:19:04 2026] [::1]:54024 Closing
+[Wed Oct 21 01:19:04 2026] [::1]:54090 Closing
+[Wed Oct 21 01:19:05 2026] [::1]:61880 Accepted
+[Wed Oct 21 01:19:05 2026] [::1]:61880 [200]: GET /landing/img/logo-vcilat.png
+[Wed Oct 21 01:19:05 2026] [::1]:61880 Closing
+[Wed Oct 21 01:19:05 2026] [::1]:57190 Accepted
+[Wed Oct 21 01:19:05 2026] [::1]:57190 [200]: GET /landing/img/logo-kamay.webp
+[Wed Oct 21 01:19:05 2026] [::1]:56108 Accepted
+[Wed Oct 21 01:19:05 2026] [::1]:57190 Closing
+[Wed Oct 21 01:19:05 2026] [::1]:59115 Accepted
+[Wed Oct 21 01:19:05 2026] [::1]:56108 [200]: GET /landing/img/logo-univalle.png
+[Wed Oct 21 01:19:05 2026] [::1]:59115 [200]: GET /landing/img/logo-emprender-futuro.png
+[Wed Oct 21 01:19:05 2026] [::1]:56108 Closing
+[Wed Oct 21 01:19:05 2026] [::1]:59115 Closing
+[Wed Oct 21 01:19:09 2026] [::1]:53132 Accepted
+[Wed Oct 21 01:19:09 2026] [::1]:53132 [200]: GET /landing/img/logo-univalle.png
+[Wed Oct 21 01:19:09 2026] [::1]:53132 Closing
+[Wed Oct 21 01:20:04 2026] [::1]:56473 Accepted
+[Wed Oct 21 01:20:04 2026] [::1]:56597 Accepted
+[Wed Oct 21 01:20:04 2026] [::1]:56473 [200]: GET /landing/img/aula-universidad.jpg
+[Wed Oct 21 01:20:04 2026] [::1]:56597 [200]: GET /landing/img/doctora-vr.jpg
+[Wed Oct 21 01:20:04 2026] [::1]:56473 Closing
+[Wed Oct 21 01:20:04 2026] [::1]:56597 Closing
+[Wed Oct 21 01:20:04 2026] [::1]:59976 Accepted
+[Wed Oct 21 01:20:04 2026] [::1]:59976 [200]: GET /landing/img/orbit-plataforma.png
+[Wed Oct 21 01:20:04 2026] [::1]:59976 Closing
+[Wed Oct 21 01:20:36 2026] [::1]:59974 Accepted
+[Wed Oct 21 01:20:36 2026] [::1]:59974 [200]: GET /landing/img/producto-ar.webp
+[Wed Oct 21 01:20:36 2026] [::1]:59974 Closing
+[Wed Oct 21 01:20:37 2026] [::1]:65286 Accepted
+[Wed Oct 21 01:20:37 2026] [::1]:65286 [200]: GET /landing/img/estudiantes-vr.jpg
+[Wed Oct 21 01:20:37 2026] [::1]:65286 Closing
+[Wed Oct 21 01:36:37 2026] [::1]:63997 Accepted
+[Wed Oct 21 01:36:38 2026] [::1]:63997 [200]: GET /
+[Wed Oct 21 01:36:38 2026] [::1]:63997 Closing
+[Wed Oct 21 01:36:38 2026] [::1]:64989 Accepted
+[Wed Oct 21 01:36:38 2026] [::1]:64989 [200]: GET /landing/css/styles.css?v=3
+[Wed Oct 21 01:36:38 2026] [::1]:58919 Accepted
+[Wed Oct 21 01:36:38 2026] [::1]:53450 Accepted
+[Wed Oct 21 01:36:38 2026] [::1]:58919 [200]: GET /landing/img/hero-ar-tablet.jpg
+[Wed Oct 21 01:36:38 2026] [::1]:54736 Accepted
+[Wed Oct 21 01:36:38 2026] [::1]:53450 [200]: GET /landing/img/producto-ventilador.webp
+[Wed Oct 21 01:36:38 2026] [::1]:64989 Closing
+[Wed Oct 21 01:36:38 2026] [::1]:54736 [200]: GET /landing/js/i18n.js?v=1
+[Wed Oct 21 01:36:38 2026] [::1]:58919 Closing
+[Wed Oct 21 01:36:38 2026] [::1]:53450 Closing
+[Wed Oct 21 01:36:38 2026] [::1]:54736 Closing
+[Wed Oct 21 01:36:38 2026] [::1]:63216 Accepted
+[Wed Oct 21 01:36:38 2026] [::1]:63216 [200]: GET /landing/js/main.js?v=2
+[Wed Oct 21 01:36:38 2026] [::1]:63216 Closing
+[Wed Oct 21 01:36:38 2026] [::1]:56905 Accepted
+[Wed Oct 21 01:36:38 2026] [::1]:62492 Accepted
+[Wed Oct 21 01:36:38 2026] [::1]:50332 Accepted
+[Wed Oct 21 01:36:38 2026] [::1]:56905 [200]: GET /landing/img/producto-ar.webp
+[Wed Oct 21 01:36:38 2026] [::1]:62492 [200]: GET /landing/img/aula-universidad.jpg
+[Wed Oct 21 01:36:38 2026] [::1]:50332 [200]: GET /landing/img/producto-tomografo.webp
+[Wed Oct 21 01:36:38 2026] [::1]:56905 Closing
+[Wed Oct 21 01:36:38 2026] [::1]:50332 Closing
+[Wed Oct 21 01:36:38 2026] [::1]:62492 Closing
+[Wed Oct 21 01:36:39 2026] [::1]:52397 Accepted
+[Wed Oct 21 01:36:39 2026] [::1]:52397 [200]: GET /landing/img/doctora-vr.jpg
+[Wed Oct 21 01:36:39 2026] [::1]:52397 Closing
+[Wed Oct 21 01:37:15 2026] [::1]:58979 Accepted
+[Wed Oct 21 01:37:15 2026] [::1]:58979 [200]: GET /landing/img/producto-ar.webp
+[Wed Oct 21 01:37:15 2026] [::1]:58979 Closing
+[Wed Oct 21 01:37:22 2026] [::1]:52681 Accepted
+[Wed Oct 21 01:37:22 2026] [::1]:52681 [200]: GET /landing/img/estudiantes-vr.jpg
+[Wed Oct 21 01:37:22 2026] [::1]:52681 Closing
+[Wed Oct 21 01:52:23 2026] [::1]:55538 Accepted
+[Wed Oct 21 01:52:23 2026] [::1]:59494 Accepted
+[Wed Oct 21 01:52:23 2026] [::1]:55538 [200]: GET /
+[Wed Oct 21 01:52:23 2026] [::1]:55538 Closing
+[Wed Oct 21 01:52:24 2026] [::1]:59494 [200]: GET /landing/css/styles.css?v=3
+[Wed Oct 21 01:52:24 2026] [::1]:59494 Closing
+[Wed Oct 21 01:52:24 2026] [::1]:58157 Accepted
+[Wed Oct 21 01:52:24 2026] [::1]:56277 Accepted
+[Wed Oct 21 01:52:24 2026] [::1]:58157 [200]: GET /landing/img/hero-ar-tablet.jpg
+[Wed Oct 21 01:52:24 2026] [::1]:56277 [200]: GET /landing/img/producto-ventilador.webp
+[Wed Oct 21 01:52:24 2026] [::1]:63392 Accepted
+[Wed Oct 21 01:52:24 2026] [::1]:63392 [200]: GET /landing/js/i18n.js?v=1
+[Wed Oct 21 01:52:24 2026] [::1]:54317 Accepted
+[Wed Oct 21 01:52:24 2026] [::1]:56277 Closing
+[Wed Oct 21 01:52:24 2026] [::1]:54317 [200]: GET /landing/js/main.js?v=2
+[Wed Oct 21 01:52:24 2026] [::1]:58157 Closing
+[Wed Oct 21 01:52:24 2026] [::1]:63392 Closing
+[Wed Oct 21 01:52:24 2026] [::1]:54317 Closing
+[Wed Oct 21 01:52:24 2026] [::1]:55527 Accepted
+[Wed Oct 21 01:52:24 2026] [::1]:55601 Accepted
+[Wed Oct 21 01:52:24 2026] [::1]:55527 [200]: GET /landing/img/logo-kamay.webp
+[Wed Oct 21 01:52:24 2026] [::1]:60267 Accepted
+[Wed Oct 21 01:52:24 2026] [::1]:55601 [200]: GET /landing/img/logo-univalle.png
+[Wed Oct 21 01:52:24 2026] [::1]:52683 Accepted
+[Wed Oct 21 01:52:24 2026] [::1]:60267 [200]: GET /landing/img/logo-emprender-futuro.png
+[Wed Oct 21 01:52:24 2026] [::1]:52683 [200]: GET /landing/img/logo-vcilat.png
+[Wed Oct 21 01:52:24 2026] [::1]:55527 Closing
+[Wed Oct 21 01:52:24 2026] [::1]:55601 Closing
+[Wed Oct 21 01:52:24 2026] [::1]:60267 Closing
+[Wed Oct 21 01:52:24 2026] [::1]:52683 Closing
+[Wed Oct 21 01:52:24 2026] [::1]:54194 Accepted
+[Wed Oct 21 01:52:24 2026] [::1]:54194 [200]: GET /landing/img/estudiante-visor.jpg
+[Wed Oct 21 01:52:24 2026] [::1]:54194 Closing
+[Wed Oct 21 01:52:42 2026] [::1]:61231 Accepted
+[Wed Oct 21 01:52:42 2026] [::1]:62279 Accepted
+[Wed Oct 21 01:52:42 2026] [::1]:61231 [200]: GET /landing/img/aula-universidad.jpg
+[Wed Oct 21 01:52:42 2026] [::1]:62279 [200]: GET /landing/img/doctora-vr.jpg
+[Wed Oct 21 01:52:42 2026] [::1]:61231 Closing
+[Wed Oct 21 01:52:42 2026] [::1]:62279 Closing
+[Wed Oct 21 01:52:42 2026] [::1]:53747 Accepted
+[Wed Oct 21 01:52:42 2026] [::1]:56191 Accepted
+[Wed Oct 21 01:52:42 2026] [::1]:53747 [200]: GET /landing/img/producto-ar.webp
+[Wed Oct 21 01:52:42 2026] [::1]:56191 [200]: GET /landing/img/producto-tomografo.webp
+[Wed Oct 21 01:52:42 2026] [::1]:53747 Closing
+[Wed Oct 21 01:52:42 2026] [::1]:56191 Closing
