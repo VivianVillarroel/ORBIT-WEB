@@ -54,8 +54,17 @@ jobs:
       - name: Generate isolated session secret
         shell: bash
         run: node --input-type=module -e 'import {randomBytes} from "node:crypto"; import {appendFileSync} from "node:fs"; appendFileSync(process.env.GITHUB_ENV, "SESSION_SECRET=" + randomBytes(48).toString("hex") + "\n");'
-      - name: Install browser and operating-system dependencies
-        run: npx playwright install --with-deps chromium
+      - name: Select browser
+        shell: bash
+        timeout-minutes: 5
+        run: |
+          chrome_path="$(command -v google-chrome || command -v chromium || true)"
+          if [ -n "$chrome_path" ]; then
+            "$chrome_path" --version
+            printf 'CHROME_PATH=%s\n' "$chrome_path" >> "$GITHUB_ENV"
+          else
+            npx playwright install --with-deps chromium
+          fi
       - name: Unit tests
         run: npm test
       - name: Formatting

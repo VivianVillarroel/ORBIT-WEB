@@ -123,8 +123,9 @@ rotación de credenciales y retención de eventos.
 
 `.github/workflows/ci.yml` ejecuta instalación con lockfile, pruebas unitarias,
 formato, auditoría de dependencias y pruebas de API/MySQL/navegador en serie sobre
-una base desechable `orbit_ci_test` con MySQL 8.4. Instala Chromium mediante
-Playwright y construye la imagen de producción. Sus contraseñas de servicio
+una base desechable `orbit_ci_test` con MySQL 8.4. Usa Chrome del runner cuando
+está disponible y, si falta, instala Chromium mediante Playwright; después
+construye la imagen de producción. Sus contraseñas de servicio
 son públicas y desechables: se usan sólo dentro de ese job aislado, sin datos ni
 credenciales reales. Las acciones GitHub se fijan a SHA y tienen acceso de sólo
 lectura al repositorio.
