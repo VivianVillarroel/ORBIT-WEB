@@ -1,0 +1,21 @@
+node_modules/
+.env
+.env.*
+!.env.example
+coverage/
+*.log
+**/config.local.php
+**/*private*
+**/*PRIVAD*
+server/test-output/
+orbit-web/uploads/
+.test-mysql*/
+mysql-review-test-data/
+.private/
+backups/*.sql
+backups/*.partial
+# Legacy exports can contain accounts and personal data; keep private copies only.
+/deploy/infinityfree/*.sql
+/deploy/infinityfree/*.zip
+/versiones/**/*.sql
+/versiones/*.zip

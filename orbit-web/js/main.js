@@ -190,7 +190,7 @@
       document.body.removeChild(ta);
     }
   }
-  var MAIL = "orbitunivalle@gmail.com";
+  var MAIL = "contacto.orbit.bo@gmail.com";
   var copyMail = $("#copyMail");
   if (copyMail) {
     copyMail.addEventListener("click", function () { copyText(MAIL, copyMail, "Copiar"); });
@@ -226,13 +226,13 @@
       ].join("\n");
       // Además del correo, la solicitud queda guardada para verla en el panel de administración.
       if (location.protocol !== "file:") {
-        fetch("api/index.php?r=solicitudes", {
+        fetch("/api/solicitudes", {
           method: "POST", keepalive: true, credentials: "same-origin", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ nombre: name.value.trim(), institucion: org.value.trim(), email: mail.value.trim(), tipo: type ? type.value : "", mensaje: msg.value.trim(), sitio_web: (form.querySelector('[name="sitio_web"]') || {}).value || "" })
         }).catch(function () {});
       }
       window.location.href = "mailto:" + MAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-      ok.textContent = tr("Abrimos tu correo con la solicitud lista. Si no se abrió, escríbenos a orbitunivalle@gmail.com.");
+      ok.textContent = tr("Abrimos tu correo con la solicitud lista. Si no se abrió, escríbenos a contacto.orbit.bo@gmail.com.");
       ok.hidden = false;
     });
   }
@@ -249,7 +249,7 @@
       eye.textContent = tr(show ? "Ocultar" : "Mostrar");
       eye.setAttribute("aria-pressed", String(show));
     });
-    $("#forgot").addEventListener("click", function () { say("Escríbenos a orbitunivalle@gmail.com desde el correo de tu cuenta y te ayudamos a recuperarla."); });
+    $("#forgot").addEventListener("click", function () { location.href = "recuperar.html"; });
     lform.addEventListener("submit", function (e) {
       e.preventDefault();
       [lmail, lpass].forEach(function (f) { f.removeAttribute("aria-invalid"); });
@@ -257,7 +257,7 @@
       if (!lpass.value) { lpass.setAttribute("aria-invalid", "true"); say("Escribe tu contraseña.", true); lpass.focus(); return; }
       if (location.protocol === "file:") { say("Para iniciar sesión abre el sitio desde el servidor (por ejemplo http://localhost/orbit-web), no como archivo.", true); return; }
       lmsg.hidden = true; lbtn.setAttribute("aria-busy", "true"); lbtn.textContent = tr("Ingresando…");
-      fetch("api/index.php?r=auth/login", {
+      fetch("/api/auth/login", {
         method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: lmail.value.trim(), password: lpass.value })
       }).then(function (r) {
@@ -276,55 +276,31 @@
   }
 
   /* ---------- Registro gratis (estudiantes independientes) ---------- */
-  var rform = $("#rgForm");
-  if (rform) {
-    var rmsg = $("#rmsg"), rbtn = $("#rgSubmit");
-    var rsay = function (text) { rmsg.textContent = tr(text); rmsg.classList.add("bad"); rmsg.hidden = false; };
-    rform.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var f = { nombre: $("#r-nom"), apellido: $("#r-ape"), email: $("#r-mail"), password: $("#r-pass") };
-      Object.keys(f).forEach(function (k) { f[k].removeAttribute("aria-invalid"); });
-      var bad = null, text = "";
-      if (!f.nombre.value.trim()) { bad = f.nombre; text = "Escribe tu nombre."; }
-      else if (!f.apellido.value.trim()) { bad = f.apellido; text = "Escribe tu apellido."; }
-      else if (!mailOk(f.email.value.trim())) { bad = f.email; text = "Escribe un correo válido."; }
-      else if (f.password.value.length < 8) { bad = f.password; text = "La contraseña debe tener al menos 8 caracteres."; }
-      if (bad) { bad.setAttribute("aria-invalid", "true"); rsay(text); bad.focus(); return; }
-      if (location.protocol === "file:") { rsay("Para registrarte abre el sitio desde el servidor, no como archivo."); return; }
-      rmsg.hidden = true; rbtn.setAttribute("aria-busy", "true");
-      fetch("api/index.php?r=registro", {
-        method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre: f.nombre.value.trim(), apellido: f.apellido.value.trim(), email: f.email.value.trim(), password: f.password.value })
-      }).then(function (r) {
-        return r.json().catch(function () { return {}; }).then(function (d) {
-          if (!r.ok) { var msg = d.fields ? d.fields[Object.keys(d.fields)[0]] : d.error; throw new Error(msg || "No se pudo crear la cuenta."); }
-          location.href = "panel.html" + (/[?&]plan=premium/.test(location.search) ? "#/plan" : "");
-        });
-      }).catch(function (err) { rbtn.removeAttribute("aria-busy"); rsay(err.message === "Failed to fetch" ? "No pudimos conectar con el servidor." : err.message); });
-    });
-  }
-
   /* ---------- Catálogo para estudiantes en la página principal ---------- */
   var cat = $("#catGrid");
   if (cat && location.protocol !== "file:") {
-    fetch("api/index.php?r=catalogo").then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-      if (!d) return;
+    var catStatus = $("#catStatus");
+    function catalogStatus(message) { if (catStatus) { catStatus.textContent = message; catStatus.hidden = !message; } }
+    cat.replaceChildren(); cat.hidden = true;
+    catalogStatus("Cargando catálogo…");
+    fetch("/api/catalogo").then(function (r) { if (!r.ok) throw new Error("Catálogo no disponible"); return r.json(); }).then(function (d) {
       var items = d.laboratorios.map(function (l) { return { t: l.nombre, s: l.area + (l.equipo ? " · " + l.equipo : ""), g: +l.gratis, k: "3D" }; })
         .concat(d.libros.map(function (b) { return { t: b.titulo, s: b.materia || "", g: +b.gratis, k: "AR" }; }));
       var prem = (d.planes || []).filter(function (p) { return p.codigo === "premium"; })[0];
       if (prem) $$("[data-premium-price]").forEach(function (el) { el.textContent = Number(prem.precio_mes).toLocaleString("es-BO") + " Bs"; });
-      if (!items.length) return;
+      if (!items.length) { catalogStatus("Los nuevos laboratorios están en preparación. Los contenidos publicados aparecerán aquí."); return; }
       var e = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
       cat.innerHTML = items.slice(0, 6).map(function (it) {
         return '<li><span class="tags"><span class="tag ' + (it.k === "AR" ? "ar" : "vr") + '">' + it.k + "</span>" + (it.g ? '<span class="tag mix">' + e(tr("Gratis")) + "</span>" : "") + "</span><b>" + e(it.t) + "</b><span>" + e(it.s) + "</span></li>";
       }).join("");
       cat.hidden = false;
-    }).catch(function () {});
+      catalogStatus(d.laboratorios.length ? "" : "Los nuevos laboratorios están en preparación. Mientras tanto, puedes explorar los libros disponibles.");
+    }).catch(function () { cat.replaceChildren(); cat.hidden = true; catalogStatus("No pudimos cargar el catálogo. Inténtalo de nuevo más tarde."); });
   }
 
   /* El botón del encabezado lleva al panel si ya hay una sesión abierta */
   if (location.protocol !== "file:" && $(".login-btn")) {
-    fetch("api/index.php?r=auth/me", { credentials: "same-origin" }).then(function (r) {
+    fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) {
       if (!r.ok) return;
       $$(".login-btn").forEach(function (a) { a.href = "panel.html"; a.lastChild.textContent = tr("Mi panel"); });
     }).catch(function () {});

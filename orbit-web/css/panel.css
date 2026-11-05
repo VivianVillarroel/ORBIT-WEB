@@ -70,7 +70,8 @@ body.app-body { font-size: 15.5px; background: var(--paper); }
 .top .crumb { font-size: 14.5px; color: var(--ink-3); font-weight: 550; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .top .crumb a { color: var(--ink-2); text-decoration: none; }
 .top .crumb a:hover { color: var(--violet-ink); }
-.top .tools { margin-left: auto; align-items: center; gap: 8px; }
+.top .tools { margin-left: auto; align-items: center; gap: 8px; flex-shrink: 0; }
+.top .site-link svg, .top .menu-btn { flex-shrink: 0; }
 .top .site-link { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line-2); font-size: 13.5px; font-weight: 600; color: var(--ink-2); text-decoration: none; }
 .top .site-link:hover { color: var(--ink); border-color: var(--ink-3); }
 .top .menu-btn { display: none; }
@@ -351,11 +352,20 @@ a.stat:hover .go { opacity: 1; }
 .stage .ph3d svg { width: 60px; height: 60px; color: var(--violet); margin: 0 auto 12px; }
 .stage .ph3d b { display: block; font-size: 18px; color: var(--ink); margin-bottom: 4px; }
 .stage .hint3d { position: absolute; left: 14px; bottom: 14px; padding: 7px 11px; border-radius: 10px; background: color-mix(in srgb, var(--surface) 85%, transparent); backdrop-filter: blur(6px); font-size: 13px; color: var(--ink-2); }
+.viewer-status { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 24px; text-align: center; background: var(--surface); color: var(--ink-2); }
 .viewer.unity-viewer { grid-template-columns: minmax(0, 1fr); }
 .stage.unity-stage { aspect-ratio: auto; border-radius: 8px; background: #dce5e8; }
 .stage.unity-stage::before { display: none; }
 .unity-stage iframe { display: block; width: 100%; height: 78vh; min-height: 680px; border: 0; }
 .unity-stage > a { margin: 12px 16px; }
+.stage.unity-stage:has(.unity-empty) { background: var(--surface); }
+.unity-empty { width: 100%; min-height: 58vh; }
+.practice-status { margin-top: 16px; }
+.practice-status .h-sec { margin: 0 0 8px; }
+.practice-status p + p { margin-top: 12px; }
+.practice-status .sub { font-size: 14px; }
+.audit-request { font-family: monospace; font-size: 12px; overflow-wrap: anywhere; }
+.audit-data { max-height: 65vh; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.6; }
 .unity-viewer > aside { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; align-items: start; }
 .ar-btn { position: absolute; right: 14px; bottom: 14px; }
 .timer { font-variant-numeric: tabular-nums; font-size: 40px; font-stretch: 118%; font-weight: 780; letter-spacing: -0.03em; line-height: 1.1; }

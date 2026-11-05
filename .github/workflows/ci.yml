@@ -1,0 +1,68 @@
+name: ORBIT validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: orbit-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  application:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: orbit_ci_test
+          MYSQL_USER: orbit_ci
+          MYSQL_PASSWORD: ci-only-disposable-password
+          MYSQL_ROOT_PASSWORD: ci-only-disposable-root-password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --host=127.0.0.1 --silent"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=30
+    env:
+      NODE_ENV: test
+      APP_ORIGIN: http://localhost:3000
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_NAME: orbit_ci_test
+      DB_USER: orbit_ci
+      DB_PASSWORD: ci-only-disposable-password
+      UNITY_WEBGL_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Generate isolated session secret
+        shell: bash
+        run: node --input-type=module -e 'import {randomBytes} from "node:crypto"; import {appendFileSync} from "node:fs"; appendFileSync(process.env.GITHUB_ENV, "SESSION_SECRET=" + randomBytes(48).toString("hex") + "\n");'
+      - name: Install browser and operating-system dependencies
+        run: npx playwright install --with-deps chromium
+      - name: Unit tests
+        run: npm test
+      - name: Formatting
+        run: npm run format:check
+      - name: Dependency security audit
+        run: npm audit --omit=dev
+      - name: API, database and browser integration tests
+        run: npm run test:integration
+      - name: Build production image
+        run: docker build --file deploy/node/Dockerfile --tag orbit-web:ci .

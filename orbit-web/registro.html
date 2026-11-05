@@ -16,6 +16,7 @@
 </script>
 <link rel="preload" href="fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/google-auth.css">
 <script>if (location.protocol === "file:") document.write('<link rel="stylesheet" href="css/font-local.css">');</script>
 </head>
 <body>
@@ -63,13 +64,14 @@
       <a class="logo" href="index.html" aria-label="ORBIT, inicio"><svg viewBox="0 0 1964 411" aria-hidden="true"><use href="#logo"/></svg></a>
       <h1>Crea tu cuenta gratis</h1>
       <p class="sub">Para estudiantes que aprenden por su cuenta. Si tu universidad trabaja con ORBIT, ya tienes una cuenta: <a href="login.html">inicia sesión</a>.</p>
+      <div class="google-access"><a class="google-button" href="/api/auth/google/start" data-google-start><img src="img/google-g.svg" alt="" width="20" height="20">Continuar con Google</a><p id="googleStatus" class="google-status" role="status" hidden></p><div class="google-divider">o continúa con tu correo</div></div>
       <form class="lform" id="rgForm" novalidate>
         <div class="lrow2">
           <div class="lf"><label for="r-nom">Nombre</label><input id="r-nom" autocomplete="given-name" placeholder="Tu nombre"></div>
           <div class="lf"><label for="r-ape">Apellido</label><input id="r-ape" autocomplete="family-name" placeholder="Tu apellido"></div>
         </div>
         <div class="lf"><label for="r-mail">Correo</label><input id="r-mail" type="email" autocomplete="email" inputmode="email" placeholder="nombre@correo.com"></div>
-        <div class="lf"><label for="r-pass">Contraseña</label><input id="r-pass" type="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres"></div>
+        <div class="lf"><label for="r-pass">Contraseña</label><input id="r-pass" type="password" autocomplete="new-password" placeholder="Mínimo 12 caracteres"></div>
         <p class="lmsg" id="rmsg" role="status" hidden></p>
         <button class="btn btn-brand" type="submit" id="rgSubmit">Crear cuenta</button>
       </form>
@@ -81,5 +83,7 @@
 </main>
 
 <script src="js/main.js" defer></script>
+<script src="js/auth.js" defer></script>
+<script src="js/google-auth.js" defer></script>
 </body>
 </html>

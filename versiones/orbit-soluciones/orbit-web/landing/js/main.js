@@ -460,7 +460,7 @@
     function fb() { try { var r = document.createRange(); r.selectNodeContents(node); var s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {} btn.textContent = tr("Seleccionado"); back(); }
     try { navigator.clipboard.writeText(text).then(ok, fb); } catch (e) { fb(); }
   }
-  $("#copyMail").addEventListener("click", function () { copy("orbitunivalle@gmail.com", this, "Copiado", $("#mail")); });
+  $("#copyMail").addEventListener("click", function () { copy("contacto.orbit.bo@gmail.com", this, "Copiado", $("#mail")); });
 
   /* ---------- Formulario de demo ---------- */
   var form = $("#demoForm"), ready = $("#ready"), err = $("#formErr"), lastMiss = null, lastReq = null;
@@ -468,7 +468,7 @@
   function buildReq() {
     var r = lastReq, t = tr("Hola equipo ORBIT,") + "\n\n" + tr("Quiero solicitar una demo.") + "\n\n" + tr("Nombre") + ": " + r.n + "\n" + tr("Institución") + ": " + r.o + "\n" + tr("Tipo") + ": " + tr(r.k) + "\n" + tr("Correo") + ": " + r.m + (r.msg ? "\n\n" + tr("Mensaje") + ":\n" + r.msg : "") + "\n\n" + tr("Gracias.");
     $("#demoText").textContent = t;
-    $("#mailDemo").href = "mailto:orbitunivalle@gmail.com?subject=" + encodeURIComponent(tr("Solicitud de demo ORBIT") + " - " + r.o) + "&body=" + encodeURIComponent(t);
+    $("#mailDemo").href = "mailto:contacto.orbit.bo@gmail.com?subject=" + encodeURIComponent(tr("Solicitud de demo ORBIT") + " - " + r.o) + "&body=" + encodeURIComponent(t);
   }
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -514,7 +514,7 @@
   var pass = $("#l-pass"), eye = $("#eye");
   eye.addEventListener("click", function () { var s = pass.type === "password"; pass.type = s ? "text" : "password"; eye.dataset.t = s ? "Ocultar" : "Mostrar"; setT(eye); });
   function msg(text, bad) { lmsg.className = bad ? "lmsg bad" : "lmsg"; lmsg.dataset.t = text; setT(lmsg); lmsg.hidden = false; }
-  $("#forgot").addEventListener("click", function () { msg("Escríbenos a orbitunivalle@gmail.com desde el correo de tu cuenta y te ayudamos a recuperarla."); });
+  $("#forgot").addEventListener("click", function () { msg("Escríbenos a contacto.orbit.bo@gmail.com desde el correo de tu cuenta y te ayudamos a recuperarla."); });
   lgForm.addEventListener("submit", function (e) {
     e.preventDefault();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($("#l-mail").value.trim()) || !pass.value) { msg("Escribe tu correo y tu contraseña para ingresar.", true); return; }

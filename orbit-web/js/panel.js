@@ -1,19 +1,12 @@
 /* ORBIT — panel para admin, docentes y estudiantes. Sin librerías.
-   Habla con la API en api/index.php?r=... y dibuja cada vista según el rol. */
+   Habla con la API en /api/... y dibuja cada vista según el rol. */
 (function () {
   "use strict";
 
-  /* Datos de pago para el plan Premium. Cámbialos por los datos reales de ORBIT. */
-  var PAGO_INFO = {
-    titular: "ORBIT",
-    banco: "Banco (configura en js/panel.js)",
-    cuenta: "N.º de cuenta (configura en js/panel.js)",
-    qr: "" // ruta a la imagen del QR de cobro, por ejemplo "img/qr-orbit.png"
-  };
   var VIEWER_SRC = "https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js";
 
-  var API = "api/index.php?r=";
-  var ME = null, CSRF = "", OPTS = {}, BADGES = {}, cleanup = [];
+  var API = "/api/";
+  var ME = null, CSRF = "", OPTS = {}, BADGES = {}, cleanup = [], viewVersion = 0;
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var page = $("#page");
@@ -32,16 +25,25 @@
   function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 
   function api(method, route, body) {
+    var version = viewVersion;
     var opt = { method: method, headers: {}, credentials: "same-origin" };
+    if (method === "GET") {
+      var controller = new AbortController(); opt.signal = controller.signal;
+      cleanup.push(function () { controller.abort(); });
+    }
     if (CSRF) opt.headers["X-CSRF-Token"] = CSRF;
     if (body instanceof FormData) opt.body = body;
     else if (body !== undefined) { opt.headers["Content-Type"] = "application/json"; opt.body = JSON.stringify(body); }
-    return fetch(API + route, opt).then(function (r) {
+    return fetch(API + route.replace("&", "?"), opt).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (data) {
+        if (method === "GET" && version !== viewVersion) { var cancelled = new Error("La vista cambió."); cancelled.name = "ViewCancelled"; throw cancelled; }
         if (r.status === 401 && route !== "auth/login") { location.href = "login.html?next=" + encodeURIComponent(location.hash); throw new Error("Sesión cerrada"); }
         if (!r.ok) { var e = new Error(data.error || "Error " + r.status); e.status = r.status; e.fields = data.fields || {}; throw e; }
         return data;
       });
+    }).catch(function (e) {
+      if (method === "GET" && version !== viewVersion) { e = new Error("La vista cambió."); e.name = "ViewCancelled"; }
+      throw e;
     });
   }
 
@@ -50,7 +52,8 @@
     var t = $("#toast"); t.textContent = msg; t.classList.toggle("bad", !!bad); t.classList.add("show");
     clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove("show"); }, 3200);
   }
-  function fail(e) { if (e && e.message !== "Sesión cerrada") toast(e.message || "Algo salió mal.", true); }
+  function viewCancelled(e) { return e && e.name === "ViewCancelled"; }
+  function fail(e) { if (e && !viewCancelled(e) && e.message !== "Sesión cerrada") toast(e.message || "Algo salió mal.", true); }
 
   /* ---------- Etiquetas ---------- */
   var L = {
@@ -96,6 +99,7 @@
       dlg.className = "modal sm";
       dlg.innerHTML = '<form method="dialog"><div class="mh"><h2>' + esc(title) + '</h2></div><div class="mb"><p>' + esc(text) + '</p></div>' +
         '<div class="mf"><button class="btn btn-line btn-sm" value="no">Cancelar</button><button class="btn btn-sm ' + (danger ? "btn-danger" : "btn-brand") + '" value="si">' + esc(okLabel || "Aceptar") + "</button></div></form>";
+      dlg.returnValue = "";
       dlg.showModal();
       dlg.addEventListener("close", function h() { dlg.removeEventListener("close", h); resolve(dlg.returnValue === "si"); });
     });
@@ -104,6 +108,7 @@
   /* Formulario genérico.
      field: { k, label, type: text|email|password|number|date|textarea|select|checks|check|file|html, req, full, hint, opts(values), show(values), dep, placeholder, accept, step } */
   function openForm(o) {
+    var version = viewVersion;
     var vals = Object.assign({}, o.values || {});
     dlg.className = "modal" + (o.small ? " sm" : "");
     dlg.innerHTML = '<form novalidate><div class="mh"><span class="mi">' + ic(o.icon || "i-edit") + "</span><h2>" + esc(o.title) + '</h2><button type="button" class="ibtn" data-x aria-label="Cerrar">' + ic("i-close") + "</button></div>" +
@@ -161,7 +166,7 @@
         if (f.type === "checks") { var box = $(".mlist", w); out[f.k] = box && box.children.length ? $$("input:checked", box).map(function (i) { return +i.value; }) : (vals[f.k] || []); }
         else if (f.type === "check") out[f.k] = $("input", w).checked;
         else if (f.type === "file" || f.type === "html" || f.type === "section") return;
-        else { var el = $("input,select,textarea", w); if (!el) return; var x = el.value.trim(); out[f.k] = f.type === "number" ? (x === "" ? null : Number(x)) : (x === "" && f.type === "select" ? null : x); }
+        else { var el = $("input,select,textarea", w); if (!el) return; var x = f.type === "password" ? el.value : el.value.trim(); out[f.k] = f.type === "number" ? (x === "" ? null : Number(x)) : (x === "" && f.type === "select" ? null : x); }
       });
       return out;
     }
@@ -180,17 +185,20 @@
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var data = read(), errBox = $(".formerr", dlg), btn = $('[type="submit"]', dlg);
+      if (btn.disabled) return;
       $$(".err", fg).forEach(function (x) { x.hidden = true; });
       $$("[aria-invalid]", fg).forEach(function (x) { x.removeAttribute("aria-invalid"); });
       errBox.hidden = true;
       o.fields.forEach(function (f) { var w = $('[data-k="' + f.k + '"]', fg); if (w && w.hidden) delete data[f.k]; });
       var files = {};
       o.fields.forEach(function (f) { if (f.type === "file") { var inp = $('[data-k="' + f.k + '"] input', fg); if (inp && inp.files[0]) files[f.k] = inp.files[0]; } });
-      btn.setAttribute("aria-busy", "true");
-      Promise.resolve(o.submit(data, files)).then(function (msg) {
+      btn.disabled = true; btn.setAttribute("aria-busy", "true");
+      Promise.resolve().then(function () { return o.submit(data, files); }).then(function (msg) {
+        if (version !== viewVersion || !dlg.contains(form)) return;
         closeModal(); if (msg !== false) toast(msg || "Guardado.");
         if (o.done) o.done();
       }).catch(function (err) {
+        if (version !== viewVersion || !dlg.contains(form)) return;
         btn.removeAttribute("aria-busy");
         if (err.message === "Sesión cerrada") return;
         errBox.textContent = err.message; errBox.hidden = false;
@@ -200,7 +208,7 @@
           var inp = $("input,select,textarea", w); if (inp) inp.setAttribute("aria-invalid", "true");
         });
         var first = $('[aria-invalid="true"]', fg); if (first) first.focus();
-      }).then(function () { btn && btn.removeAttribute("aria-busy"); });
+      }).then(function () { if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); } });
     });
     dlg.showModal();
     var firstInput = $("input:not([type=checkbox]),select,textarea", fg); if (firstInput) firstInput.focus();
@@ -236,7 +244,7 @@
       { k: "apellido", label: "Apellido", req: true },
       { k: "email", label: "Correo", type: "email", req: true },
       { k: "telefono", label: "Teléfono" },
-      { k: "password", label: isNew ? "Contraseña inicial" : "Nueva contraseña", type: "password", req: isNew, hint: isNew ? "Mínimo 8 caracteres. Compártela con la persona." : "Déjala vacía para no cambiarla." }
+      { k: "password", label: isNew ? "Contraseña inicial" : "Nueva contraseña", type: "password", req: isNew, hint: isNew ? "Mínimo 12 caracteres. Compártela con la persona." : "Déjala vacía para no cambiarla." }
     ];
   }
 
@@ -265,7 +273,7 @@
         ];
       },
       defaults: { pais: "Bolivia", tipo: "universidad", activo: true },
-      delMsg: function (r) { return "Se eliminará «" + r.nombre + "». Solo es posible si no tiene carreras registradas."; },
+      delMsg: function (r) { return "Se archivará «" + r.nombre + "». La institución y sus registros vinculados se conservarán en la base de datos y se ocultarán de las vistas habituales."; },
       reloadOpts: true
     },
     carreras: {
@@ -293,7 +301,7 @@
         ];
       },
       defaults: { area: "Salud", activo: true },
-      delMsg: function (r) { return "Se eliminará la carrera «" + r.nombre + "». Solo es posible si no tiene estudiantes ni clases."; },
+      delMsg: function (r) { return "Se archivará la carrera «" + r.nombre + "». Sus estudiantes, clases e historial se conservarán en la base de datos y se ocultarán de las vistas habituales."; },
       reloadOpts: true
     },
     docentes: {
@@ -319,7 +327,7 @@
       },
       toForm: function (r) { return Object.assign({}, r, { carrera_ids: ids(r.carrera_ids) }); },
       defaults: { activo: true },
-      delMsg: function (r) { return "Se eliminará la cuenta de " + r.nombre + " " + r.apellido + ". Sus clases quedarán sin docente asignado."; },
+      delMsg: function (r) { return "Se archivará la cuenta de " + r.nombre + " " + r.apellido + ". Ya no podrá acceder. Sus clases e historial se conservarán en la base de datos."; },
       reloadOpts: true
     },
     estudiantes: {
@@ -353,7 +361,7 @@
           ]);
       },
       defaults: { tipo: "institucional", activo: true },
-      delMsg: function (r) { return "Se eliminará la cuenta de " + r.nombre + " " + r.apellido + " con sus inscripciones y prácticas."; },
+      delMsg: function (r) { return "Se archivará la cuenta de " + r.nombre + " " + r.apellido + ". Ya no podrá acceder. Sus inscripciones, notas y prácticas se conservarán en la base de datos."; },
       reloadOpts: true
     },
     clases: {
@@ -392,7 +400,7 @@
         return f;
       },
       defaults: { estado: "activa" },
-      delMsg: function (r) { return "Se eliminará la clase «" + r.nombre + "» con sus inscripciones."; },
+      delMsg: function (r) { return "Se archivará la clase «" + r.nombre + "». Dejará de aparecer en las vistas habituales. Sus inscripciones, notas, prácticas y certificados se conservarán en la base de datos."; },
       canEdit: function(){return ME.rol!=="director";}, canDelete: function(){return ME.rol!=="director";}, canCreate: function () { return ME.rol === "admin" || ME.rol === "docente"; }
     },
     laboratorios: {
@@ -419,8 +427,8 @@
           { k: "solicitado_por", label: "Pedido por", type: "select", blank: "Nadie (desarrollo propio)", opts: optUnis },
           { k: "descripcion", label: "Descripción", type: "textarea" },
           { type: "section", k: "s2", label: "Modelo 3D e imagen" },
-          { k: "modelo_url", label: "Modelo 3D o simulador Unity", full: true, placeholder: "simuladores/m2/index.html", hint: "Para Unity M2 usa simuladores/m2/index.html. También admite un archivo .glb o el modelo subido aquí abajo." },
-          { k: "modelo", label: "…o sube el modelo (.glb)", type: "file", accept: ".glb,.gltf", full: true },
+          { k: "modelo_url", label: "Modelo 3D o simulador Unity", full: true, placeholder: "simuladores/m2/index.html", hint: "Para Unity M2 usa simuladores/m2/index.html. El espacio permanecerá vacío hasta publicar la versión WebGL. También admite un archivo .glb o el modelo subido aquí abajo." },
+          { k: "modelo", label: "…o sube el modelo (.glb)", type: "file", accept: ".glb", full: true },
           { k: "imagen_url", label: "Imagen de portada (enlace)", full: true, placeholder: "https://… o img/…" },
           { k: "vr_disponible", label: "Ya tiene versión en Realidad Virtual", type: "check", full: true },
           { type: "section", k: "s3", label: "Acceso" },
@@ -436,7 +444,7 @@
         var fd = new FormData(); fd.append("archivo", files.modelo);
         return api("POST", "laboratorios/" + id + "/modelo", fd);
       },
-      delMsg: function (r) { return "Se eliminará el laboratorio «" + r.nombre + "» con sus prácticas registradas."; },
+      delMsg: function (r) { return "Se archivará el laboratorio «" + r.nombre + "». Dejará de estar disponible. El laboratorio y sus prácticas registradas se conservarán en la base de datos."; },
       reloadOpts: true
     },
     libros: {
@@ -466,7 +474,7 @@
           { k: "libro_url", label: "Libro o páginas marcadoras (PDF, enlace)", full: true, placeholder: "https://…" },
           { k: "pdf", label: "…o sube el PDF", type: "file", accept: ".pdf", full: true },
           { k: "modelo_url", label: "Modelo 3D para ver en AR desde el navegador (.glb, opcional)", full: true, placeholder: "https://… .glb", hint: "Con esto el estudiante abre el personaje en AR desde su celular sin instalar nada." },
-          { k: "modelo", label: "…o sube el modelo .glb", type: "file", accept: ".glb,.gltf", full: true },
+          { k: "modelo", label: "…o sube el modelo .glb", type: "file", accept: ".glb", full: true },
           { type: "section", k: "s3", label: "Acceso" },
           { k: "estado", label: "Estado", type: "select", req: true, opts: function () { return pairs(L.libro); } },
           { k: "carrera_ids", label: "Carreras con acceso", type: "checks", opts: function () { return optCarreras(); } },
@@ -477,12 +485,12 @@
       toForm: function (r) { return Object.assign({}, r, { carrera_ids: ids(r.carrera_ids) }); },
       defaults: { estado: "en_desarrollo" },
       afterSave: function (id, data, files) {
-        var jobs = [];
-        if (files.pdf) { var a = new FormData(); a.append("archivo", files.pdf); jobs.push(api("POST", "libros/" + id + "/pdf", a)); }
-        if (files.modelo) { var b = new FormData(); b.append("archivo", files.modelo); jobs.push(api("POST", "libros/" + id + "/modelo", b)); }
-        return Promise.all(jobs);
+        var upload = Promise.resolve();
+        if (files.pdf) upload = upload.then(function () { var a = new FormData(); a.append("archivo", files.pdf); return api("POST", "libros/" + id + "/pdf", a); });
+        if (files.modelo) upload = upload.then(function () { var b = new FormData(); b.append("archivo", files.modelo); return api("POST", "libros/" + id + "/modelo", b); });
+        return upload;
       },
-      delMsg: function (r) { return "Se eliminará el libro «" + r.titulo + "» con sus resultados de quiz."; }
+      delMsg: function (r) { return "Se archivará el libro «" + r.titulo + "». El libro y sus autoevaluaciones se conservarán en la base de datos y se ocultarán de las vistas habituales."; }
     },
     licencias: {
       title: "Licencias", sub: "Pilotos, licencias institucionales (35 Bs por estudiante al mes) y proyectos a medida.", single: "licencia", api: "licencias",
@@ -508,7 +516,7 @@
         ];
       },
       defaults: { plan: "institucional", estado: "activa", precio_estudiante_mes: 35 },
-      delMsg: function (r) { return "Se eliminará la licencia de " + r.universidad + "."; }
+      delMsg: function (r) { return "Se archivará la licencia de " + r.universidad + ". Sus datos se conservarán en la base de datos."; }
     },
     planes: {
       title: "Planes freemium", sub: "Lo que pagan los estudiantes independientes. El plan Gratis da acceso a los contenidos marcados como gratis.", single: "plan", api: "planes",
@@ -593,7 +601,7 @@
     var canEdit = cfg.canEdit ? cfg.canEdit() : true;
     var canDelete = cfg.canDelete ? cfg.canDelete() : true;
     var cols = cfg.cols.filter(function (c) { return !c.admin || ME.rol === "admin"; });
-    var state = {}, rows = [];
+    var state = {}, rows = [], loadVersion = 0, version = viewVersion;
     page.innerHTML = '<div class="ph"><div><h1>' + esc(cfg.title) + "</h1><p>" + esc(cfg.sub || "") + '</p></div><div class="ph-actions">' +
       (canCreate ? '<button class="btn btn-brand btn-sm" id="newBtn">' + ic("i-plus") + newLabel(cfg) + "</button>" : "") + "</div></div>" +
       '<div class="toolbar"><div class="search">' + ic("i-search") + '<input class="inp" type="search" id="q" placeholder="Buscar" aria-label="Buscar"></div>' +
@@ -603,17 +611,20 @@
 
     var box = $("#box");
     function load() {
+      if (version !== viewVersion || !page.contains(box)) return;
+      var currentLoad = ++loadVersion;
       var qs = Object.keys(state).filter(function (k) { return state[k]; }).map(function (k) { return "&" + k + "=" + encodeURIComponent(state[k]); }).join("");
       api("GET", cfg.api + qs).then(function (d) {
+        if (currentLoad !== loadVersion || version !== viewVersion) return;
         rows = d.items;
         var actions = (canEdit || canDelete || cfg.rowActions) ? function (r) {
           return (cfg.rowActions ? cfg.rowActions(r) : "") +
             (canEdit && !(cfg.api==="laboratorios" && ME.rol==="director" && +r.creado_por!==+ME.id) ? '<button class="ibtn" data-ed="' + r.id + '" aria-label="Editar">' + ic("i-edit") + "</button>" : "") +
-            (canDelete && !(cfg.api==="laboratorios" && ME.rol==="director" && +r.creado_por!==+ME.id) ? '<button class="ibtn del" data-del="' + r.id + '" aria-label="Eliminar">' + ic("i-trash") + "</button>" : "");
+            (canDelete && !(cfg.api==="laboratorios" && ME.rol==="director" && +r.creado_por!==+ME.id) ? '<button class="ibtn del" data-del="' + r.id + '" aria-label="Archivar">' + ic("i-trash") + "</button>" : "");
         } : null;
         box.innerHTML = table(cols, rows, actions) || emptyBox("Sin resultados", state.q || Object.keys(state).length ? " Prueba con otra búsqueda o filtro." : " Todavía no hay registros.");
         $("#cnt").textContent = rows.length ? rows.length + (rows.length === 1 ? " registro" : " registros") : "";
-      }).catch(function (e) { box.innerHTML = emptyBox("No se pudo cargar", " " + e.message); });
+      }).catch(function (e) { if (viewCancelled(e) || currentLoad !== loadVersion) return; box.innerHTML = emptyBox("No se pudo cargar", " " + e.message); });
     }
     function edit(r) {
       var isNew = !r;
@@ -627,7 +638,7 @@
             return Promise.resolve(cfg.afterSave && cfg.afterSave(id, data, files)).then(function () { return isNew ? "Creado." : "Cambios guardados."; });
           });
         },
-        done: function () { if (cfg.reloadOpts) loadOpts().then(load); else load(); }
+        done: function () { if (cfg.reloadOpts) loadOpts().then(load).catch(fail); else load(); }
       });
     }
     box.addEventListener("click", function (e) {
@@ -635,9 +646,9 @@
       if (ed) { edit(rows.filter(function (x) { return +x.id === +ed.dataset.ed; })[0]); }
       if (del) {
         var r = rows.filter(function (x) { return +x.id === +del.dataset.del; })[0];
-        confirmBox("Eliminar " + cfg.single, cfg.delMsg ? cfg.delMsg(r) : "Esta acción no se puede deshacer.", "Eliminar", true).then(function (yes) {
+        confirmBox("Archivar " + cfg.single, cfg.delMsg ? cfg.delMsg(r) : "El registro se ocultará de las vistas habituales y se conservará en la base de datos.", "Archivar", true).then(function (yes) {
           if (!yes) return;
-          return api("DELETE", cfg.api + "/" + r.id).then(function () { toast("Eliminado."); if (cfg.reloadOpts) loadOpts(); load(); });
+          return api("DELETE", cfg.api + "/" + r.id).then(function () { toast("Archivado. Datos conservados."); if (version !== viewVersion) return; if (cfg.reloadOpts) loadOpts().then(load).catch(fail); else load(); });
         }).catch(fail);
       }
     });
@@ -726,17 +737,18 @@
           (d.recientes.map(function (p) { return '<div><span class="thumb-ph">' + ic("i-cube") + '</span><div class="grow"><b>' + esc(p.laboratorio) + "</b><span>" + fdt(p.realizada_en) + (p.duracion_min ? " · " + p.duracion_min + " min" : "") + " · " + p.modalidad + "</span></div>" + (p.puntaje != null ? '<span class="score">' + p.puntaje + "</span>" : pill(DONE, +p.completada)) + "</div>"; }).join("") || emptyBox("Aún no registras prácticas", " Abre un laboratorio para empezar.", "i-cube")) + "</div></section>";
       }
       page.innerHTML = h;
-    }).catch(function (e) { page.innerHTML = emptyBox("No se pudo cargar el resumen", " " + e.message); });
+    }).catch(function (e) { if (viewCancelled(e)) return; page.innerHTML = emptyBox("No se pudo cargar el resumen", " " + e.message); });
   }
 
   /* ---------- Detalle de clase ---------- */
   function viewClase(id) {
+    var version = viewVersion;
     page.innerHTML = '<div class="loading">Cargando…</div>';
     api("GET", "clases/" + id).then(function (d) {
       var k = d.item, manage = ME.rol === "admin" || ME.rol === "docente";
       setCrumb('<a href="#/clases">' + (ME.rol === "admin" ? "Clases" : "Mis clases") + "</a> / " + esc(k.nombre));
       page.innerHTML = '<div class="ph"><div><h1>' + esc(k.nombre) + '</h1><p><span class="pills">' + pill(L.clase, k.estado) + (k.codigo ? '<span class="pill">' + esc(k.codigo) + "</span>" : "") + "</span></p></div>" +
-        (manage ? '<div class="ph-actions"><button class="btn btn-line btn-sm" id="edK">' + ic("i-edit") + 'Editar</button><button class="btn btn-line btn-sm" id="delK">' + ic("i-trash") + "Eliminar</button></div>" : "") + "</div>" +
+        (manage ? '<div class="ph-actions"><button class="btn btn-line btn-sm" id="edK">' + ic("i-edit") + 'Editar</button><button class="btn btn-line btn-sm" id="delK">' + ic("i-trash") + "Archivar</button></div>" : "") + "</div>" +
         '<div class="card card-pad"><dl class="dl">' +
         [["Carrera", k.carrera + (ME.rol === "admin" ? " · " + (k.universidad_sigla || k.universidad) : "")], ["Docente", k.docente || "Sin asignar"], ["Periodo", k.periodo], ["Horario", k.horario || "—"], ["Aula", k.aula || "—"], ["Inscritos", k.inscritos + (k.cupo ? " de " + k.cupo : "")]]
           .concat(ME.rol === "estudiante" ? [["Mi estado", L.insc[k.mi_estado] ? L.insc[k.mi_estado][0] + (k.mi_nota != null ? " · nota " + k.mi_nota : "") : "—"]] : [])
@@ -744,16 +756,18 @@
         (k.descripcion ? '<p style="margin-top:14px;color:var(--ink-2)">' + esc(k.descripcion) + "</p>" : "") + "</div>" +
         '<div class="tabs" role="tablist" style="margin-top:22px">' + (manage ? '<button role="tab" aria-selected="true" data-tab="est">Estudiantes</button>' : "") +
         '<button role="tab" aria-selected="' + !manage + '" data-tab="lab">Laboratorios</button></div><div id="tabBody"></div>';
-      var tabBody = $("#tabBody");
-      function showTab(t) { $$("[data-tab]").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === t)); }); (t === "est" ? tabEst : tabLab)(); }
+      var tabBody = $("#tabBody"), tabVersion = 0;
+      function showTab(t) { tabVersion++; $$("[data-tab]").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === t)); }); (t === "est" ? tabEst : tabLab)(); }
       $$("[data-tab]").forEach(function (b) { b.addEventListener("click", function () { showTab(b.dataset.tab); }); });
 
       function tabEst() {
         tabBody.innerHTML = '<div class="toolbar"><button class="btn btn-brand btn-sm" id="addEst">' + ic("i-plus") + 'Inscribir estudiante</button><button class="btn btn-line btn-sm" id="sendSiu">Enviar al SIU</button><span class="sub">Integración pendiente · sin envío de notas</span></div><div class="card" id="estBox"><div class="loading">Cargando…</div></div>';
         $("#sendSiu").addEventListener("click",function(){toast("El envío al SIU aún no está conectado. No se enviaron notas.");});
-        var list = [];
+        var list = [], currentTab = tabVersion;
         function load() {
+          if (currentTab !== tabVersion || !page.contains(tabBody)) return;
           api("GET", "clases/" + id + "/inscripciones").then(function (r) {
+            if (currentTab !== tabVersion || !page.contains(tabBody) || !$("#estBox")) return;
             list = r.items;
             $("#estBox").innerHTML = table([
               { label: "Estudiante", render: function (x) { return nameCell(x.nombre + " " + x.apellido, x.codigo, "#/seguimiento/estudiantes/"+x.estudiante_id); } },
@@ -764,17 +778,17 @@
               { label: "Estado", render: function (x) { return pill(L.insc, x.estado); } },
               { label: "Nota", cls: "num", render: function (x) { return num(x.nota_final); } }
             ], list, function (x) {
-              return '<button class="ibtn" data-ei="' + x.id + '" aria-label="Editar estado y nota">' + ic("i-edit") + '</button><button class="ibtn del" data-di="' + x.id + '" aria-label="Quitar de la clase">' + ic("i-trash") + "</button>";
+              return '<button class="ibtn" data-ei="' + x.id + '" aria-label="Editar estado y nota">' + ic("i-edit") + '</button>' + (x.estado === "retirado" ? "" : '<button class="ibtn del" data-di="' + x.id + '" aria-label="Retirar estudiante de la clase">' + ic("i-trash") + "</button>");
             }) || emptyBox("Sin estudiantes inscritos", " Inscribe al primero con el botón de arriba.");
           }).catch(fail);
         }
         $("#addEst").addEventListener("click", function () {
           var taken = list.filter(function (x) { return x.estado !== "retirado"; }).map(function (x) { return +x.estudiante_id; });
-          var opts = (OPTS.estudiantes || []).filter(function (e) { return +e.universidad_id === +k.universidad_id && taken.indexOf(+e.id) < 0; })
+          var opts = (OPTS.estudiantes || []).filter(function (e) { return +e.carrera_id === +k.carrera_id && taken.indexOf(+e.id) < 0; })
             .sort(function (a, b) { return (+b.carrera_id === +k.carrera_id) - (+a.carrera_id === +k.carrera_id); })
             .map(function (e) { return [e.id, e.nombre + " · " + e.codigo, e.carrera]; });
           openForm({ title: "Inscribir estudiante", small: true, submitLabel: "Inscribir",
-            fields: [{ k: "estudiante_id", label: "Estudiante", type: "select", req: true, full: true, opts: function () { return opts; }, hint: opts.length ? "Primero aparecen los de la carrera de esta clase." : "No hay más estudiantes de esta institución." }],
+            fields: [{ k: "estudiante_id", label: "Estudiante", type: "select", req: true, full: true, opts: function () { return opts; }, hint: opts.length ? "Estudiantes de la carrera de esta clase." : "No hay más estudiantes de esta carrera." }],
             submit: function (data) { return api("POST", "clases/" + id + "/inscripciones", data).then(function () { return "Estudiante inscrito."; }); },
             done: load });
         });
@@ -787,8 +801,8 @@
               submit: function (data) { return api("PUT", "clases/" + id + "/inscripciones/" + x.id, data); }, done: load });
           }
           if (di) {
-            confirmBox("Quitar de la clase", "El estudiante dejará de ver esta clase. Sus prácticas se conservan.", "Quitar", true).then(function (yes) {
-              if (yes) return api("DELETE", "clases/" + id + "/inscripciones/" + di.dataset.di).then(function () { toast("Estudiante quitado."); load(); });
+            confirmBox("Retirar estudiante", "El estudiante dejará de ver esta clase. Se conservan sus prácticas, notas e historial académico.", "Retirar", true).then(function (yes) {
+              if (yes) return api("DELETE", "clases/" + id + "/inscripciones/" + di.dataset.di).then(function () { toast("Estudiante retirado. Historial conservado."); load(); });
             }).catch(fail);
           }
         });
@@ -797,9 +811,11 @@
 
       function tabLab() {
         tabBody.innerHTML = (manage ? '<div class="toolbar"><button class="btn btn-brand btn-sm" id="addLab">' + ic("i-plus") + "Asignar laboratorio</button></div>" : "") + '<div id="labBox"><div class="loading">Cargando…</div></div>';
-        var list = [];
+        var list = [], currentTab = tabVersion;
         function load() {
+          if (currentTab !== tabVersion || !page.contains(tabBody)) return;
           api("GET", "clases/" + id + "/laboratorios").then(function (r) {
+            if (currentTab !== tabVersion || !page.contains(tabBody) || !$("#labBox")) return;
             list = r.items;
             if (!list.length) { $("#labBox").innerHTML = '<div class="card">' + emptyBox("Sin laboratorios asignados", manage ? " Asigna los laboratorios que deben practicar en esta clase." : "") + "</div>"; return; }
             if (manage) {
@@ -808,7 +824,7 @@
                 { label: "Estado", render: function (x) { return pill(L.lab, x.estado); } },
                 { label: "Modalidad", render: modal3d },
                 { label: "Fecha límite", render: function (x) { return fdate(x.fecha_limite); } }
-              ], list, function (x) { return '<button class="ibtn" data-el="' + x.id + '" aria-label="Cambiar fecha límite">' + ic("i-edit") + '</button><button class="ibtn del" data-dl="' + x.id + '" aria-label="Quitar">' + ic("i-trash") + "</button>"; }) + "</div>";
+              ], list, function (x) { return '<button class="ibtn" data-el="' + x.id + '" aria-label="Cambiar fecha límite">' + ic("i-edit") + '</button><button class="ibtn del" data-dl="' + x.id + '" aria-label="Archivar asignación">' + ic("i-trash") + "</button>"; }) + "</div>";
             } else {
               $("#labBox").innerHTML = '<div class="gcards">' + list.map(function (x) {
                 return '<article class="lcard"><div class="lmedia">' + ic("i-cube") + '<span class="pills">' + modal3d(x).replace(/<\/?span class="pills">/g, "") + '</span></div><div class="lbody"><h3>' + esc(x.nombre) + '</h3><p class="meta">' +
@@ -833,8 +849,8 @@
           $("#labBox").addEventListener("click", function (e) {
             var el = e.target.closest("[data-el]"), dl = e.target.closest("[data-dl]");
             if (el) assign(list.filter(function (y) { return +y.id === +el.dataset.el; })[0]);
-            if (dl) confirmBox("Quitar laboratorio", "Los estudiantes ya no lo verán como tarea de esta clase.", "Quitar", true).then(function (yes) {
-              if (yes) return api("DELETE", "clases/" + id + "/laboratorios/" + dl.dataset.dl).then(function () { toast("Laboratorio quitado."); load(); });
+            if (dl) confirmBox("Archivar asignación", "Los estudiantes ya no verán este laboratorio como tarea de la clase. La asignación y sus prácticas se conservarán en la base de datos.", "Archivar", true).then(function (yes) {
+              if (yes) return api("DELETE", "clases/" + id + "/laboratorios/" + dl.dataset.dl).then(function () { toast("Asignación archivada. Datos conservados."); load(); });
             }).catch(fail);
           });
         }
@@ -847,13 +863,13 @@
             submit: function (data) { return api("PUT", "clases/" + id, data); }, done: function () { viewClase(id); } });
         });
         $("#delK").addEventListener("click", function () {
-          confirmBox("Eliminar clase", RES.clases.delMsg(k), "Eliminar", true).then(function (yes) {
-            if (yes) return api("DELETE", "clases/" + id).then(function () { toast("Clase eliminada."); location.hash = "#/clases"; });
+          confirmBox("Archivar clase", RES.clases.delMsg(k), "Archivar", true).then(function (yes) {
+            if (yes) return api("DELETE", "clases/" + id).then(function () { toast("Clase archivada. Datos conservados."); if (version === viewVersion) location.hash = "#/clases"; });
           }).catch(fail);
         });
       }
       showTab(manage ? "est" : "lab");
-    }).catch(function (e) { page.innerHTML = emptyBox("No se pudo abrir la clase", " " + e.message); });
+    }).catch(function (e) { if (viewCancelled(e)) return; page.innerHTML = emptyBox("No se pudo abrir la clase", " " + e.message); });
   }
 
   /* Lista de clases del estudiante (solo lectura) */
@@ -872,16 +888,18 @@
 
   /* ---------- Laboratorios y libros (tarjetas) ---------- */
   function viewCards(kind) {
-    var lab = kind === "lab", route = lab ? "laboratorios" : "libros";
+    var lab = kind === "lab", route = lab ? "laboratorios" : "libros", loadVersion = 0;
     var intro = lab
-      ? (ME.rol === "docente" ? "Los laboratorios habilitados para tus carreras. Asígnalos a tus clases desde cada clase." : isIndep() ? "Laboratorios en 3D para practicar por tu cuenta, desde el navegador." : "Los laboratorios de tu carrera, en 3D desde el navegador. Pronto también en Realidad Virtual.")
-      : "Apunta la cámara de tu celular a las páginas del libro y un personaje 3D te explica cada tema. Al final de cada tema hay un quiz.";
+      ? (ME.rol === "docente" ? "Abre y prueba los laboratorios de tus carreras antes de asignarlos a tus clases. Las pruebas docentes no modifican el avance de los estudiantes." : isIndep() ? "Laboratorios en 3D para practicar por tu cuenta, desde el navegador." : "Los laboratorios de tu carrera, en 3D desde el navegador. Pronto también en Realidad Virtual.")
+      : "Explora los libros en Realidad Aumentada y registra tus autoevaluaciones por tema. Los resultados declarados no son notas oficiales.";
     page.innerHTML = '<div class="ph"><div><span class="eyebrow' + (lab ? "" : " ar") + '">' + ic(lab ? "i-cube" : "i-scan") + (lab ? "Laboratorios 3D" : "Realidad Aumentada") + "</span><h1>" + (lab ? "Laboratorios" : "Libros AR") + "</h1><p>" + intro + "</p></div></div>" +
       '<div class="toolbar"><div class="search">' + ic("i-search") + '<input class="inp" type="search" id="q" placeholder="Buscar" aria-label="Buscar"></div></div>' +
       (isIndep() && !ME.premium_hasta ? '<div style="margin-bottom:18px">' + note("ar", "Los contenidos con candado son parte del plan <b>Premium</b>. <a href=\"#/plan\">Ver planes</a>", "i-lock") + "</div>" : "") +
       '<div id="box"><div class="loading">Cargando…</div></div>';
     function load(q) {
+      var currentLoad = ++loadVersion;
       api("GET", route + (q ? "&q=" + encodeURIComponent(q) : "")).then(function (d) {
+        if (currentLoad !== loadVersion) return;
         $("#box").innerHTML = d.items.length ? '<div class="gcards">' + d.items.map(function (r) { return lab ? labCard(r) : bookCard(r); }).join("") + "</div>"
           : '<div class="card">' + emptyBox(lab ? "Todavía no hay laboratorios para ti" : "Todavía no hay libros para ti", q ? " Prueba con otra búsqueda." : " Cuando ORBIT publique uno para tu carrera aparecerá aquí.", lab ? "i-cube" : "i-book") + "</div>";
       }).catch(fail);
@@ -898,9 +916,9 @@
       (+r.bloqueado ? '<span class="lock">' + ic("i-lock") + "Premium</span>" : (isIndep() && +r.gratis ? '<span class="lock free">Gratis</span>' : "")) + "</div>";
   }
   function labCard(r) {
-    var open = !+r.bloqueado && r.estado === "publicado";
+    var open = !+r.bloqueado && (r.estado === "publicado" || ME.rol === "docente");
     var btn = +r.bloqueado ? '<a class="btn btn-ink btn-sm" href="#/plan">' + ic("i-lock") + "Desbloquear</a>"
-      : open ? '<a class="btn btn-brand btn-sm" href="#/laboratorios/' + r.id + '">' + ic("i-cube") + "Abrir en 3D</a>" : '<span class="pill">Aún no publicado</span>';
+      : open ? '<a class="btn btn-brand btn-sm" href="#/laboratorios/' + r.id + '">' + ic("i-cube") + (ME.rol === "docente" ? "Probar práctica" : "Abrir práctica") + "</a>" : '<span class="pill">Aún no publicado</span>';
     var prog = isStudent() && +r.mis_practicas ? r.mis_practicas + (+r.mis_practicas === 1 ? " práctica" : " prácticas") + (r.mi_mejor_puntaje != null ? " · mejor " + r.mi_mejor_puntaje : "") : "";
     return '<article class="lcard' + (+r.bloqueado ? " locked" : "") + '">' + media(r) + '<div class="lbody"><span class="meta">' + esc([r.area, r.equipo].filter(Boolean).join(" · ")) + "</span>" +
       "<h3>" + (open ? '<a href="#/laboratorios/' + r.id + '">' + esc(r.nombre) + "</a>" : esc(r.nombre)) + "</h3>" + (r.descripcion ? "<p>" + esc(r.descripcion) + "</p>" : "") +
@@ -917,11 +935,39 @@
   }
 
   /* ---------- Visor 3D de un laboratorio ---------- */
-  var viewerLoaded = false;
+  var viewerPromise = null;
   function loadViewer() {
-    if (viewerLoaded || window.customElements && customElements.get("model-viewer")) return;
-    viewerLoaded = true;
-    var s = document.createElement("script"); s.type = "module"; s.src = VIEWER_SRC; document.head.appendChild(s);
+    if (window.customElements && customElements.get("model-viewer")) return Promise.resolve();
+    if (viewerPromise) return viewerPromise;
+    viewerPromise = new Promise(function (resolve, reject) {
+      var script = document.createElement("script"); script.type = "module"; script.src = VIEWER_SRC;
+      var timeout = setTimeout(function () { failed(); }, 30000);
+      function failed() { clearTimeout(timeout); script.remove(); viewerPromise = null; reject(new Error("No se pudo cargar el visor 3D.")); }
+      script.onerror = failed;
+      script.onload = function () {
+        if (!customElements.get("model-viewer")) { failed(); return; }
+        clearTimeout(timeout); resolve();
+      };
+      document.head.appendChild(script);
+    });
+    return viewerPromise;
+  }
+  function prepareViewer(container, onReady, onFailure) {
+    var model = $("model-viewer", container), status = document.createElement("div"), active = true;
+    status.className = "viewer-status"; status.setAttribute("role", "status");
+    status.textContent = "Cargando el modelo 3D…"; container.appendChild(status);
+    var timeout = setTimeout(failed, 90000);
+    function loaded() { if (!active) return; clearTimeout(timeout); status.remove(); if (onReady) onReady(); }
+    function failed() {
+      if (!active) return;
+      clearTimeout(timeout); status.replaceChildren();
+      var message = document.createElement("p"); message.textContent = "No se pudo cargar el visor o el modelo 3D. Comprueba tu conexión y vuelve a cargar.";
+      var retry = document.createElement("button"); retry.className = "btn btn-line btn-sm"; retry.type = "button"; retry.textContent = "Volver a cargar"; retry.onclick = function () { location.reload(); };
+      status.append(message, retry); container.appendChild(status); if (onFailure) onFailure();
+    }
+    model.addEventListener("load", loaded); model.addEventListener("error", failed);
+    cleanup.push(function () { active = false; clearTimeout(timeout); model.removeEventListener("load", loaded); model.removeEventListener("error", failed); });
+    loadViewer().then(function () { if (model.loaded) loaded(); }).catch(failed);
   }
   function lockedBox(what) {
     return '<div class="card">' + emptyBox(what + " es parte del plan Premium", " Con Premium abres todos los laboratorios 3D y libros AR del catálogo.", "i-lock") + '<p style="text-align:center;padding-bottom:30px"><a class="btn btn-brand" href="#/plan">' + ic("i-star") + "Ver planes</a></p></div>";
@@ -933,19 +979,26 @@
       setCrumb('<a href="#/laboratorios">Laboratorios</a> / ' + esc(r.nombre));
       if (+r.bloqueado) { page.innerHTML = lockedBox("Este laboratorio"); return; }
       var unitySimulator = /^simuladores\/[a-z0-9_-]+\/index\.html$/.test(r.modelo_url || "");
-      if (r.modelo_url && !unitySimulator) loadViewer();
+      var ready = !!r.modelo_url && (!unitySimulator || r.unity_disponible === true);
+      var teacherPreview = ME.rol === "docente";
       var stage = unitySimulator
-        ? '<iframe src="' + esc(r.modelo_url) + '" title="Simulador Unity: ' + esc(r.nombre) + '" allow="fullscreen"></iframe><a class="btn btn-line btn-sm" href="' + esc(r.modelo_url) + '" target="_blank" rel="noopener">Abrir simulador en ventana completa</a>'
+        ? ready
+          ? '<iframe src="' + esc(r.modelo_url) + '" title="Simulador Unity: ' + esc(r.nombre) + '" allow="fullscreen"></iframe><a class="btn btn-line btn-sm" href="' + esc(r.modelo_url) + '" target="_blank" rel="noopener">Abrir simulador en ventana completa</a>'
+          : '<div class="unity-empty" role="region" aria-label="Espacio reservado para la práctica Unity"></div>'
         : r.modelo_url
         ? '<model-viewer src="' + esc(r.modelo_url) + '" alt="Modelo 3D de ' + esc(r.nombre) + '" camera-controls touch-action="pan-y" auto-rotate shadow-intensity="1" exposure="1" interaction-prompt="auto"></model-viewer><span class="hint3d">Arrastra para girar · rueda o pellizco para acercar</span>'
         : '<div class="ph3d">' + (r.imagen_url ? '<img src="' + esc(r.imagen_url) + '" alt="">' : "") + "<div>" + ic("i-cube") + "<b>El modelo 3D está en preparación</b><p>Cuando el equipo de ORBIT lo publique, lo verás aquí para girarlo y explorarlo.</p></div></div>";
       var practice = "";
-      if (isStudent()) {
+      if (!ready) {
+        practice = '<section class="card card-pad practice-status" aria-labelledby="practiceStatus"><h2 class="h-sec" id="practiceStatus">' + (teacherPreview ? "Prueba docente" : "Práctica en preparación") + '</h2><p>' + (unitySimulator ? "Estamos trabajando en Unity. Este espacio queda reservado para ejecutar la práctica desde esta página cuando esté publicada." : "El equipo de ORBIT está preparando el contenido de esta práctica.") + '</p><p class="sub">La práctica todavía no está disponible para iniciar ni guardar resultados.</p></section>';
+      } else if (teacherPreview) {
+        practice = '<section class="card card-pad practice-status" aria-labelledby="practiceStatus"><h2 class="h-sec" id="practiceStatus">Prueba docente</h2><p>Explora el laboratorio y comprueba la práctica antes de asignarla. Esta prueba no registra notas ni avance de estudiantes.</p><p class="sub">Tiempo de prueba</p><p class="timer" id="timer" aria-label="Tiempo de prueba docente">0:00</p><button class="btn btn-line btn-sm" type="button" id="resetPreview"' + (unitySimulator ? '' : ' disabled') + '>Reiniciar tiempo de prueba</button></section>';
+      } else if (isStudent()) {
         practice = '<div class="card card-pad" style="margin-top:16px"><h2 class="h-sec" style="margin:0 0 8px">Tu práctica</h2><p style="color:var(--ink-2);font-size:14.5px">Tiempo en este laboratorio</p><p class="timer" id="timer">0:00</p>' +
           '<form id="prForm" class="fg" style="margin-top:14px">' +
           (r.clases && r.clases.length ? '<div class="fld full"><label for="prClase">Clase</label><select id="prClase"><option value="">Práctica libre</option>' + r.clases.map(function (c) { return '<option value="' + c.id + '">' + esc(c.nombre) + (c.fecha_limite ? " (hasta el " + fdate(c.fecha_limite) + ")" : "") + "</option>"; }).join("") + "</select></div>" : "") +
-          '<div class="fld full"><label class="chk"><input type="checkbox" id="prDone" checked>Completé el recorrido</label></div>' +
-          '<div class="fld full"><button class="btn btn-brand" type="submit">' + ic("i-check") + "Guardar práctica</button></div></form>" +
+          '<div class="fld full"><label class="chk"><input type="checkbox" id="prDone">Completé el recorrido</label></div>' +
+          '<div class="fld full"><button class="btn btn-brand" type="submit"' + (unitySimulator ? '' : ' disabled') + '>' + ic("i-check") + "Guardar práctica</button></div></form>" +
           '<p style="margin-top:10px;font-size:13.5px;color:var(--ink-3)">' + (+r.mis_practicas ? "Llevas " + r.mis_practicas + (+r.mis_practicas === 1 ? " práctica" : " prácticas") + " en este laboratorio." : "Aún no registras prácticas aquí.") + "</p></div>";
       }
       page.innerHTML = '<div class="ph"><div><span class="eyebrow">' + ic("i-cube") + "Laboratorio 3D</span><h1>" + esc(r.nombre) + "</h1><p>" + esc([r.area, r.equipo].filter(Boolean).join(" · ")) + "</p></div>" +
@@ -955,20 +1008,28 @@
         (r.descripcion ? '<p style="margin-top:14px">' + esc(r.descripcion) + "</p>" : "") +
         '<dl class="dl" style="margin-top:16px"><div><dt>Carreras</dt><dd>' + esc(r.carreras || "—") + "</dd></div>" + (ME.rol !== "estudiante" ? "<div><dt>Estado</dt><dd>" + pill(L.lab, r.estado) + "</dd></div>" : "") + "</dl></div>" +
         practice + "</aside></div>";
-      if (isStudent()) {
-        var start = Date.now(), timer = $("#timer");
-        var iv = setInterval(function () { var s = Math.floor((Date.now() - start) / 1000); timer.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }, 1000);
+      if (ready && (isStudent() || teacherPreview)) {
+        var start = Date.now(), timer = $("#timer"), practiceLoaded = unitySimulator;
+        var action = teacherPreview ? $("#resetPreview") : $('#prForm [type="submit"]');
+        if (!unitySimulator) prepareViewer($(".stage"), function () { start = Date.now(); practiceLoaded = true; action.disabled = false; }, function () { practiceLoaded = false; action.disabled = true; });
+        var iv = setInterval(function () { if (!practiceLoaded) return; var s = Math.floor((Date.now() - start) / 1000); timer.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }, 1000);
         cleanup.push(function () { clearInterval(iv); });
+        if (teacherPreview) {
+          $("#resetPreview").addEventListener("click", function () { start = Date.now(); timer.textContent = "0:00"; });
+          return;
+        }
         $("#prForm").addEventListener("submit", function (e) {
           e.preventDefault();
-          var btn = $('[type="submit"]', e.target), cl = $("#prClase");
+          var btn = $('[type="submit"]', e.target), cl = $("#prClase"), completed = $("#prDone");
+          if (btn.disabled || !practiceLoaded) return;
+          btn.disabled = true;
           btn.setAttribute("aria-busy", "true");
-          api("POST", "practicas", { laboratorio_id: r.id, clase_id: cl && cl.value ? +cl.value : null, modalidad: "3D", duracion_min: Math.max(1, Math.round((Date.now() - start) / 60000)), completada: $("#prDone").checked })
-            .then(function () { toast("Práctica guardada."); start = Date.now(); r.mis_practicas = (+r.mis_practicas || 0) + 1; })
-            .catch(fail).then(function () { btn.removeAttribute("aria-busy"); });
+          api("POST", "practicas", { laboratorio_id: r.id, clase_id: cl && cl.value ? +cl.value : null, modalidad: "3D", duracion_min: Math.min(600, Math.max(1, Math.round((Date.now() - start) / 60000))), completada: completed.checked })
+            .then(function () { toast("Práctica guardada."); start = Date.now(); timer.textContent = "0:00"; completed.checked = false; r.mis_practicas = (+r.mis_practicas || 0) + 1; })
+            .catch(fail).then(function () { btn.disabled = !practiceLoaded; btn.removeAttribute("aria-busy"); });
         });
-      }
-    }).catch(function (e) { page.innerHTML = '<div class="card">' + emptyBox("No se pudo abrir el laboratorio", " " + e.message, "i-cube") + "</div>"; });
+      } else if (r.modelo_url && !unitySimulator) prepareViewer($(".stage"));
+    }).catch(function (e) { if (viewCancelled(e)) return; page.innerHTML = '<div class="card">' + emptyBox("No se pudo abrir el laboratorio", " " + e.message, "i-cube") + "</div>"; });
   }
 
   /* ---------- Libro AR ---------- */
@@ -981,12 +1042,11 @@
       var best = {};
       res.forEach(function (x) { if (best[x.tema] == null || +x.puntaje > best[x.tema]) best[x.tema] = x.puntaje == null ? best[x.tema] || 0 : +x.puntaje; });
       var hechos = temas.filter(function (t) { return best[t] != null; }).length;
-      if (r.modelo_url) loadViewer();
 
       var pasos = '<ol class="steps-n ar">' +
         "<li><div><b>Descarga la app ORBIT AR</b><p>Es la app que reconoce las páginas del libro con la cámara.</p>" + (r.app_url ? '<a class="btn btn-ar btn-sm" href="' + esc(r.app_url) + '" target="_blank" rel="noopener">' + ic("i-phone") + "Descargar la app</a>" : '<span class="pill" style="margin-top:8px">El enlace de la app estará disponible pronto</span>') + "</div></li>" +
         "<li><div><b>Ten el libro a mano</b><p>Usa tu libro impreso, o abre las páginas marcadoras en otra pantalla o imprímelas.</p>" + (r.libro_url ? '<a class="btn btn-line btn-sm" href="' + esc(r.libro_url) + '" target="_blank" rel="noopener">' + ic("i-file") + "Abrir páginas (PDF)</a>" : "") + "</div></li>" +
-        "<li><div><b>Apunta la cámara a cada página</b><p>Aparece el personaje en 3D, explica el tema y tú eliges qué preguntas explorar. Al terminar, responde el quiz.</p></div></li></ol>";
+        "<li><div><b>Apunta la cámara a cada página</b><p>Explora el personaje y el contenido del tema. Después puedes registrar una autoevaluación en esta página.</p></div></li></ol>";
 
       var arNow = r.modelo_url
         ? '<section class="card" style="margin-top:18px"><div class="card-h"><h2>Pruébalo ahora en AR</h2><span class="pill ar nodot">' + ic("i-phone") + "Desde el celular</span></div>" +
@@ -1002,9 +1062,9 @@
 
       var quiz = "";
       if (isStudent() && temas.length) {
-        quiz = '<section class="card card-pad" style="margin-top:18px"><h2 class="h-sec" style="margin:0 0 6px">Registrar un quiz</h2><p style="color:var(--ink-2);font-size:14.5px">Si la app no lo envió sola, anota tu resultado.</p>' +
+        quiz = '<section class="card card-pad" style="margin-top:18px"><h2 class="h-sec" style="margin:0 0 6px">Registrar autoevaluación</h2><p style="color:var(--ink-2);font-size:14.5px">Este resultado lo declaras tú. No es una nota oficial ni se usa para aprobar cursos o emitir certificados.</p>' +
           '<form id="qzForm" class="fg" style="margin-top:12px"><div class="fld"><label for="qzTema">Tema</label><select id="qzTema">' + temas.map(function (t) { return '<option value="' + esc(t) + '">' + esc(t) + "</option>"; }).join("") + "</select></div>" +
-          '<div class="fld"><label for="qzPts">Puntaje (0 a 100)</label><input id="qzPts" type="number" min="0" max="100"></div><div class="fld full"><button class="btn btn-ar btn-sm" type="submit">' + ic("i-check") + "Guardar resultado</button></div></form></section>";
+          '<div class="fld"><label for="qzPts">Puntaje declarado (0 a 100)</label><input id="qzPts" type="number" min="0" max="100"></div><div class="fld full"><button class="btn btn-ar btn-sm" type="submit">' + ic("i-check") + "Guardar autoevaluación</button></div></form></section>";
       }
 
       page.innerHTML = '<div class="ph"><div><span class="eyebrow ar">' + ic("i-scan") + "Libro en Realidad Aumentada</span></div>" +
@@ -1013,19 +1073,21 @@
         '<div><h1 style="font-size:clamp(28px,3vw,40px);font-stretch:122%;font-weight:770;letter-spacing:-0.035em;line-height:1.02">' + esc(r.titulo) + "</h1>" +
         '<p style="margin-top:8px;color:var(--ink-3);font-weight:600">' + esc([r.autor, r.materia].filter(Boolean).join(" · ")) + "</p>" +
         (r.descripcion ? '<p style="margin-top:14px;color:var(--ink-2);max-width:62ch">' + esc(r.descripcion) + "</p>" : "") +
-        '<h2 class="h-sec" style="margin-top:22px">Temas' + (isStudent() && temas.length ? '<span class="pill ok nodot">' + hechos + " de " + temas.length + " con quiz</span>" : "") + "</h2>" + temasHtml + "</div></div>" +
+        '<h2 class="h-sec" style="margin-top:22px">Temas' + (isStudent() && temas.length ? '<span class="pill ok nodot">' + hechos + " de " + temas.length + " autoevaluados</span>" : "") + "</h2>" + temasHtml + "</div></div>" +
         '<div class="cols-21"><div><section class="card card-pad"><h2 class="h-sec" style="margin:0 0 16px">Cómo usarlo</h2>' + pasos + "</section>" + arNow + "</div><div>" +
-        (isStudent() ? '<section class="card"><div class="card-h"><h2>Mis resultados</h2></div><div class="list">' +
-          (res.map(function (x) { return '<div><span class="thumb-ph ar">' + ic("i-star") + '</span><div class="grow"><b>' + esc(x.tema) + "</b><span>" + fdt(x.realizado_en) + "</span></div>" + (x.puntaje != null ? '<span class="score">' + x.puntaje + "</span>" : "") + "</div>"; }).join("") || emptyBox("Aún no hay resultados", " Responde el quiz al final de cada tema.", "i-star")) +
+        (isStudent() ? '<section class="card"><div class="card-h"><h2>Mis autoevaluaciones</h2></div><div class="list">' +
+          (res.map(function (x) { return '<div><span class="thumb-ph ar">' + ic("i-star") + '</span><div class="grow"><b>' + esc(x.tema) + "</b><span>" + fdt(x.realizado_en) + " · Declarado por ti</span></div>" + (x.puntaje != null ? '<span class="score">' + x.puntaje + "</span>" : "") + "</div>"; }).join("") || emptyBox("Aún no hay autoevaluaciones", " Registra tu autoevaluación después de repasar cada tema.", "i-star")) +
           "</div></section>" + quiz
           : '<section class="card card-pad"><dl class="dl" style="grid-template-columns:1fr"><div><dt>Carreras</dt><dd>' + esc(r.carreras || "—") + "</dd></div><div><dt>Estado</dt><dd>" + pill(L.libro, r.estado) + "</dd></div><div><dt>Acceso freemium</dt><dd>" + acceso(r) + "</dd></div></dl></section>") +
         "</div></div>";
 
+      if (r.modelo_url) prepareViewer($("model-viewer").parentNode);
       var q = $("#qzForm");
       if (q) q.addEventListener("submit", function (e) {
         e.preventDefault();
-        var pts = $("#qzPts").value;
-        api("POST", "libros/" + id + "/resultados", { tema: $("#qzTema").value, puntaje: pts === "" ? null : +pts }).then(function () { toast("Resultado guardado."); viewLibro(id); }).catch(fail);
+        var pts = $("#qzPts").value, button = $('[type="submit"]', e.target), version = viewVersion;
+        if (button.disabled) return; button.disabled = true;
+        api("POST", "libros/" + id + "/resultados", { tema: $("#qzTema").value, puntaje: pts === "" ? null : +pts }).then(function () { toast("Autoevaluación guardada."); if (version === viewVersion) viewLibro(id); }).catch(fail).finally(function () { button.disabled = false; });
       });
       var eb = $("#edBook");
       if (eb) eb.addEventListener("click", function (e) {
@@ -1034,7 +1096,7 @@
           submit: function (data, files) { return api("PUT", "libros/" + id, data).then(function () { return RES.libros.afterSave(id, data, files); }).then(function () { return "Cambios guardados."; }); },
           done: function () { viewLibro(id); } });
       });
-    }).catch(function (e) { page.innerHTML = '<div class="card">' + emptyBox("No se pudo abrir el libro", " " + e.message, "i-book") + "</div>"; });
+    }).catch(function (e) { if (viewCancelled(e)) return; page.innerHTML = '<div class="card">' + emptyBox("No se pudo abrir el libro", " " + e.message, "i-book") + "</div>"; });
   }
 
   /* ---------- Prácticas del estudiante ---------- */
@@ -1057,22 +1119,26 @@
     page.innerHTML = '<div class="loading">Cargando…</div>';
     api("GET", "suscripcion").then(function (d) {
       var premium = d.planes.filter(function (p) { return p.codigo === "premium"; })[0], gratis = d.planes.filter(function (p) { return p.codigo === "gratis"; })[0];
+      var payment = d.payment || {}, methods = (payment.methods || []).filter(function (method) { return method === "qr" ? !!payment.qr_url : method === "transferencia" && !!(payment.bank && payment.account); });
+      var bankReady = methods.indexOf("transferencia") >= 0, qrReady = methods.indexOf("qr") >= 0;
+      var paymentReady = payment.enabled === true && !!payment.holder && methods.length > 0;
       var h = '<div class="ph"><div><span class="eyebrow">' + ic("i-star") + "Versión freemium</span><h1>Mi plan</h1><p>Con Premium abres todos los laboratorios 3D y libros AR del catálogo. Se paga mes a mes, sin contratos.</p></div></div>";
       if (d.actual) h += '<div style="margin-bottom:18px">' + note("ok", "Tu plan <b>Premium</b> está activo hasta el <b>" + fdate(d.actual.fecha_fin) + "</b>. Puedes pagar más meses para extenderlo.", "i-check") + "</div>";
       if (d.pendiente) h += '<div style="margin-bottom:18px">' + note("warn", "Recibimos tu pago de <b>" + bs(d.pendiente.monto) + "</b> (" + esc(METODO[d.pendiente.metodo]) + " " + esc(d.pendiente.referencia) + "). Lo estamos revisando; tu plan se activará apenas lo confirmemos.", "i-info") + "</div>";
       var cur = '<span class="pill ok nodot cur">' + ic("i-check") + "Tu plan</span>";
       var li = function (t) { return "<li>" + ic("i-check") + "<span>" + t + "</span></li>"; };
       h += '<div class="plans-mini">' +
-        (gratis ? '<div class="pm">' + (!d.actual ? cur : "") + "<h3>" + esc(gratis.nombre) + '</h3><p class="price"><b>Bs 0</b><span>siempre</span></p><p>' + esc(gratis.descripcion || "") + "</p><ul>" + li("Laboratorios 3D de muestra") + li("Libros AR de muestra") + li("Registro de tus prácticas") + "</ul></div>" : "") +
-        (premium ? '<div class="pm prem">' + (d.actual ? cur : "") + "<h3>" + esc(premium.nombre) + '</h3><p class="price"><b>' + bs(premium.precio_mes) + "</b><span>al mes</span></p><p>" + esc(premium.descripcion || "") + "</p><ul>" + li("Todos los laboratorios 3D del catálogo") + li("Todos los libros AR con sus quiz") + li("Nuevos contenidos cada mes") + "</ul></div>" : "") + "</div>";
-      if (premium && !d.pendiente) {
+        (gratis ? '<div class="pm">' + (!d.actual ? cur : "") + "<h3>" + esc(gratis.nombre) + '</h3><p class="price"><b>Bs 0</b><span>siempre</span></p><p>' + esc(gratis.descripcion || "") + "</p><ul>" + li("Laboratorios 3D gratuitos") + li("Libros AR gratuitos") + li("Registro de tus prácticas") + "</ul></div>" : "") +
+        (premium ? '<div class="pm prem">' + (d.actual ? cur : "") + "<h3>" + esc(premium.nombre) + '</h3><p class="price"><b>' + bs(premium.precio_mes) + "</b><span>al mes</span></p><p>" + esc(premium.descripcion || "") + "</p><ul>" + li("Todos los laboratorios 3D del catálogo") + li("Todos los libros AR del catálogo") + li("Avance y seguimiento personal") + "</ul></div>" : "") + "</div>";
+      if (premium && !d.pendiente && !paymentReady) h += '<section class="card card-pad practice-status"><p>Los datos de pago aún no están disponibles. Contacta a ORBIT.</p></section>';
+      if (premium && !d.pendiente && paymentReady) {
         h += '<h2 class="h-sec">' + (d.actual ? "Extender Premium" : "Pasarme a Premium") + '</h2><div class="card card-pad"><div class="cols-2"><div>' +
-          '<ol class="steps-n"><li><div><b>Paga por QR o transferencia</b><p>A nombre de ' + esc(PAGO_INFO.titular) + ".</p>" +
-          '<div style="display:flex;gap:18px;align-items:center;margin-top:14px;flex-wrap:wrap">' + (PAGO_INFO.qr ? '<img src="' + esc(PAGO_INFO.qr) + '" alt="QR de pago de ORBIT" width="140" height="140" style="border-radius:16px">' : '<div class="qr">Aquí va el QR de cobro de ORBIT</div>') +
-          '<dl class="dl" style="grid-template-columns:1fr"><div><dt>Banco</dt><dd>' + esc(PAGO_INFO.banco) + "</dd></div><div><dt>Cuenta</dt><dd>" + esc(PAGO_INFO.cuenta) + "</dd></div></dl></div></div></li></ol></div>" +
+          '<ol class="steps-n"><li><div><b>Paga por ' + methods.map(function (method) { return esc(METODO[method]); }).join(" o ") + '</b><p>A nombre de ' + esc(payment.holder) + ".</p>" +
+          '<div style="display:flex;gap:18px;align-items:center;margin-top:14px;flex-wrap:wrap">' + (qrReady ? '<img src="' + esc(payment.qr_url) + '" alt="QR de pago de ORBIT" width="140" height="140" style="border-radius:16px">' : '') +
+          (bankReady ? '<dl class="dl" style="grid-template-columns:1fr"><div><dt>Banco</dt><dd>' + esc(payment.bank) + "</dd></div><div><dt>Cuenta</dt><dd>" + esc(payment.account) + "</dd></div></dl>" : '') + '</div></div></li></ol></div>' +
           '<form id="payForm" class="fg" style="align-content:start"><ol class="steps-n full" start="2" style="counter-reset:st 1"><li><div><b>Cuéntanos tu pago</b><p>Lo revisamos y activamos tu plan.</p></div></li></ol>' +
           '<div class="fld"><label for="pMeses">Meses</label><select id="pMeses">' + [1, 3, 6, 12].map(function (m) { return '<option value="' + m + '">' + m + (m === 1 ? " mes" : " meses") + " · " + bs(premium.precio_mes * m) + "</option>"; }).join("") + "</select></div>" +
-          '<div class="fld"><label for="pMetodo">Método</label><select id="pMetodo"><option value="qr">QR</option><option value="transferencia">Transferencia</option></select></div>' +
+          '<div class="fld"><label for="pMetodo">Método</label><select id="pMetodo">' + methods.map(function (method) { return '<option value="' + method + '">' + esc(METODO[method]) + '</option>'; }).join("") + '</select></div>' +
           '<div class="fld full"><label for="pRef">Número de transacción <span class="req">*</span></label><input id="pRef" maxlength="80" placeholder="Lo encuentras en el comprobante"><span class="err" hidden></span></div>' +
           '<div class="fld full"><button class="btn btn-brand" type="submit">Enviar pago para revisión</button></div></form></div></div>';
       }
@@ -1088,15 +1154,16 @@
       var f = $("#payForm");
       if (f) f.addEventListener("submit", function (e) {
         e.preventDefault();
-        var ref = $("#pRef"), err = $(".err", ref.parentNode), btn = $('[type="submit"]', f);
+        var ref = $("#pRef"), err = $(".err", ref.parentNode), btn = $('[type="submit"]', f), version = viewVersion;
+        if (btn.disabled) return;
         err.hidden = true; ref.removeAttribute("aria-invalid");
         if (!ref.value.trim()) { err.textContent = "Escribe el número de transacción."; err.hidden = false; ref.setAttribute("aria-invalid", "true"); ref.focus(); return; }
-        btn.setAttribute("aria-busy", "true");
+        btn.disabled = true; btn.setAttribute("aria-busy", "true");
         api("POST", "suscripcion/pago", { meses: +$("#pMeses").value, metodo: $("#pMetodo").value, referencia: ref.value.trim() })
-          .then(function () { toast("Pago enviado. Te avisaremos al confirmarlo."); viewPlan(); })
-          .catch(function (x) { btn.removeAttribute("aria-busy"); fail(x); });
+          .then(function () { toast("Pago enviado. Te avisaremos al confirmarlo."); if (version === viewVersion && page.contains(f)) viewPlan(); })
+          .catch(fail).finally(function () { btn.disabled = false; btn.removeAttribute("aria-busy"); });
       });
-    }).catch(function (e) { page.innerHTML = emptyBox("No se pudo cargar tu plan", " " + e.message); });
+    }).catch(function (e) { if (viewCancelled(e)) return; page.innerHTML = emptyBox("No se pudo cargar tu plan", " " + e.message); });
   }
 
   /* ---------- Importar listas ---------- */
@@ -1127,6 +1194,7 @@
       else if (c === "\n" || c === "\r") { if (c === "\r" && text[i + 1] === "\n") i++; row.push(cell); rows.push(row); row = []; cell = ""; }
       else cell += c;
     }
+    if (q) throw new Error("El archivo CSV tiene comillas sin cerrar.");
     if (cell !== "" || row.length) { row.push(cell); rows.push(row); }
     return rows.filter(function (r) { return r.some(function (x) { return x.trim() !== ""; }); });
   }
@@ -1136,12 +1204,12 @@
     });
   }
   function downloadCSV(name, header, rows) {
-    var csv = "﻿" + [header].concat(rows).map(function (r) { return r.map(function (x) { x = String(x == null ? "" : x); return /[;"\n]/.test(x) ? '"' + x.replace(/"/g, '""') + '"' : x; }).join(";"); }).join("\r\n");
+    var csv = "﻿" + [header].concat(rows).map(function (r) { return r.map(function (x) { x = String(x == null ? "" : x); if (/^[\s\u0000-\u001f]*[=+\-@＝＋－＠]|^[\t\r\n]/.test(x)) x = "'" + x; return '"' + x.replace(/"/g, '""') + '"'; }).join(";"); }).join("\r\n");
     var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })); a.download = name;
     document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
   }
   function viewImportar() {
-    var tipo = "estudiantes", filas = [];
+    var tipo = "estudiantes", filas = [], version = viewVersion, fileVersion = 0, importing = false;
     page.innerHTML = '<div class="ph"><div><span class="eyebrow">' + ic("i-upload") + 'Piloto e instituciones</span><h1>Importar listas</h1><p>Carga las listas que te envía cada institución (por ejemplo, Univalle para el piloto): estudiantes con su carrera, carreras y los laboratorios que piden.</p></div></div>' +
       '<div class="card card-pad steps-imp">' +
       '<div class="fg"><div class="fld"><label for="impTipo">Qué vas a importar</label><select id="impTipo">' + Object.keys(IMPORT).map(function (k) { return '<option value="' + k + '">' + IMPORT[k].label + "</option>"; }).join("") + "</select></div>" +
@@ -1151,16 +1219,22 @@
       '<label class="drop" id="drop"><span class="em-ic">' + ic("i-upload") + '</span><b>Elige el archivo CSV o arrástralo aquí</b><span class="hint">En Excel: Archivo › Guardar como › CSV. La primera fila debe tener los encabezados.</span><input type="file" id="impFile" accept=".csv,text/csv" hidden></label>' +
       '<div id="impPrev"></div></div><div id="impRes"></div>';
     function help() {
+      fileVersion++;
       var c = IMPORT[tipo];
       $("#impHelp").innerHTML = esc(c.help) + " Columnas: " + c.cols.map(function (x) { return c.req.indexOf(x) > -1 ? "<b>" + x + "</b>" : x; }).join(", ") +
         ' (en negrita, obligatorias). <a href="plantillas/' + tipo + '.csv" download>Descargar plantilla</a>';
       $("#impPrev").innerHTML = ""; $("#impRes").innerHTML = ""; filas = []; $("#impFile").value = "";
     }
     function handle(file) {
-      if (!file) return;
+      if (!file || importing) return;
+      var request = ++fileVersion;
+      filas = []; $("#impPrev").innerHTML = "";
+      if (file.size > 1024 * 1024) { $("#impPrev").textContent = "El CSV debe pesar como máximo 1 MB."; return; }
       readFileText(file).then(function (text) {
+        if (version !== viewVersion || request !== fileVersion) return;
         var rows = parseCSV(text), c = IMPORT[tipo];
         if (rows.length < 2) { $("#impPrev").innerHTML = '<p class="formerr">El archivo no tiene filas de datos.</p>'; return; }
+        if (rows.length > 3001) { $("#impPrev").textContent = "Importa como máximo 3000 filas por archivo."; return; }
         var head = rows[0].map(normH), map = {};
         c.cols.forEach(function (col) { (ALIAS[col] || [col]).some(function (a) { var i = head.indexOf(a); if (i > -1) { map[col] = i; return true; } return false; }); });
         if (tipo === "laboratorios" && map.carreras === undefined && map.carrera !== undefined) map.carreras = map.carrera;
@@ -1173,13 +1247,17 @@
           filas.slice(0, 8).map(function (o) { return "<tr>" + cols.map(function (k) { return "<td>" + esc(o[k]) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table></div>" +
           '<div style="margin-top:14px"><button class="btn btn-brand" id="impGo">' + ic("i-upload") + "Importar " + filas.length + " filas</button></div>";
         $("#impGo").addEventListener("click", run);
-      }).catch(function () { $("#impPrev").innerHTML = '<p class="formerr">No se pudo leer el archivo.</p>'; });
+      }).catch(function (error) { if (version !== viewVersion || request !== fileVersion) return; $("#impPrev").textContent = error.message || "No se pudo leer el archivo."; });
     }
     function run() {
       var uni = $("#impUni").value, btn = $("#impGo");
+      if (importing || !filas.length) return;
       if (!uni) { toast("Elige la institución.", true); $("#impUni").focus(); return; }
+      var controls = $$("#impTipo,#impUni,#impCrear,#impFile");
+      importing = true; btn.disabled = true; controls.forEach(function (control) { control.disabled = true; });
       btn.setAttribute("aria-busy", "true"); btn.lastChild.textContent = "Importando…";
       api("POST", "importar/" + tipo, { universidad_id: +uni, crear_carreras: $("#impCrear").checked, filas: filas }).then(function (r) {
+        if (version !== viewVersion || !page.contains(btn)) return;
         var h = '<div class="card card-pad" style="margin-top:16px"><h2 class="h-sec" style="margin-top:0">Resultado</h2><div class="note ok">' + ic("i-check") + '<div><b>' + r.creados + "</b> creados" +
           (r.actualizados ? " · <b>" + r.actualizados + "</b> ya existían (se agregaron sus carreras)" : "") + (r.omitidas.length ? " · <b>" + r.omitidas.length + "</b> filas con avisos" : "") +
           (r.carreras_creadas && r.carreras_creadas.length ? "<br>Carreras nuevas: " + esc(r.carreras_creadas.join(", ")) + ". Revisa su área en Carreras." : "") + "</div></div>";
@@ -1190,8 +1268,9 @@
         if ($("#credBtn")) $("#credBtn").addEventListener("click", function () {
           downloadCSV("orbit-contrasenas-" + new Date().toISOString().slice(0, 10) + ".csv", ["nombre", "email", "codigo", "carrera", "contrasena"], r.credenciales.map(function (c) { return [c.nombre, c.email, c.codigo, c.carrera, c.password]; }));
         });
-        loadOpts();
-      }).catch(function (e) { btn.removeAttribute("aria-busy"); btn.lastChild.textContent = "Importar " + filas.length + " filas"; fail(e); });
+        loadOpts().catch(fail);
+      }).catch(function (e) { if (version === viewVersion && page.contains(btn)) { btn.lastChild.textContent = "Importar " + filas.length + " filas"; fail(e); } })
+        .finally(function () { importing = false; btn.disabled = false; btn.removeAttribute("aria-busy"); controls.forEach(function (control) { control.disabled = false; }); });
     }
     $("#impTipo").addEventListener("change", function (e) { tipo = e.target.value; help(); });
     $("#impFile").addEventListener("change", function (e) { handle(e.target.files[0]); });
@@ -1213,19 +1292,27 @@
       '<div class="fld"><label for="pN">Nueva contraseña</label><input id="pN" type="password" autocomplete="new-password"><span class="err" hidden></span></div>' +
       '<div class="fld"><label for="pC">Repítela</label><input id="pC" type="password" autocomplete="new-password"><span class="err" hidden></span></div>' +
       '<div class="fld full"><button class="btn btn-brand btn-sm" type="submit">Cambiar contraseña</button></div></form></section></div>';
+    var emailCard=document.createElement('section');emailCard.className='card card-pad';emailCard.style.marginTop='18px';emailCard.innerHTML='<h2 class="h-sec">Cambiar correo</h2><form id="emailForm" class="fg"><div class="fld"><label for="nextEmail">Nuevo correo</label><input type="email" id="nextEmail" autocomplete="email" required></div><div class="fld"><label for="emailPassword">Contraseña actual</label><input type="password" id="emailPassword" autocomplete="current-password" required></div><div class="fld full" id="emailCodeBox" hidden><label for="emailCode">Código recibido en el nuevo correo</label><input id="emailCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></div><div class="fld full"><button type="submit" class="btn btn-brand btn-sm">Enviar código</button></div><p id="emailStatus" role="status"></p></form>';page.append(emailCard);var emailChallenge=null;$('#emailForm').addEventListener('submit',function(e){e.preventDefault();var form=e.target,button=form.querySelector('button');if(button.disabled)return;button.disabled=true;var route=emailChallenge?'auth/email-confirm':'auth/email-request';var body=emailChallenge?{challenge:emailChallenge,code:$('#emailCode').value}:{email:$('#nextEmail').value,actual:$('#emailPassword').value};api('POST',route,body).then(function(d){if(d.user){CSRF=d.csrf;ME=d.user;renderUser();}if(!page.contains(form))return;$('#emailPassword').value='';if(d.challenge){emailChallenge=d.challenge;$('#emailPassword').disabled=true;$('#nextEmail').readOnly=true;$('#emailCodeBox').hidden=false;$('#emailCode').focus();button.textContent='Confirmar nuevo correo';$('#emailStatus').textContent=d.message;}else{CSRF=d.csrf;ME=d.user;renderUser();toast('Correo confirmado.');viewCuenta();}}).catch(fail).finally(function(){button.disabled=false;});});
+    var googleCard=document.createElement('section');googleCard.className='card card-pad';googleCard.style.marginTop='18px';googleCard.innerHTML='<h2 class="h-sec">Acceso con Google</h2><p id="googleLinkStatus" class="google-status" role="status">Cargando…</p><form id="googleLinkForm" class="fg" hidden><div class="fld full"><label for="googleLinkPassword">Confirma tu contraseña de ORBIT</label><input type="password" id="googleLinkPassword" autocomplete="current-password" required></div><div class="fld full"><button class="google-button" type="submit"><img src="img/google-g.svg" alt="" width="20" height="20">Vincular Google</button></div></form>';page.append(googleCard);api('GET','auth/google/status').then(function(d){$('#googleLinkStatus').textContent=d.linked?'Tu cuenta de Google está vinculada. Puedes usarla para iniciar sesión.':d.enabled?'Vincula tu cuenta para iniciar sesión con Google y conservar tus datos.':'El acceso con Google estará disponible pronto.';$('#googleLinkForm').hidden=d.linked||!d.enabled;}).catch(fail);$('#googleLinkForm').addEventListener('submit',function(e){e.preventDefault();var form=e.target,button=form.querySelector('button');if(button.disabled)return;button.disabled=true;var actual=$('#googleLinkPassword').value;$('#googleLinkPassword').value='';api('POST','auth/google/link',{actual:actual}).then(function(d){if(page.contains(form))location.assign(d.url);}).catch(function(err){button.disabled=false;fail(err);});});
     $("#fMe").addEventListener("submit", function (e) {
       e.preventDefault();
+      var button = $('[type="submit"]', e.target); if (button.disabled) return; button.disabled = true;
       var data = { nombre: $("#mNom").value.trim(), apellido: $("#mApe").value.trim(), telefono: $("#mTel").value.trim() };
-      api("PUT", "auth/me", data).then(function () { Object.assign(ME, data); renderUser(); toast("Datos guardados."); }).catch(fail);
+      api("PUT", "auth/me", data).then(function () { Object.assign(ME, data); renderUser(); toast("Datos guardados."); }).catch(fail).finally(function () { button.disabled = false; });
     });
     $("#fPw").addEventListener("submit", function (e) {
       e.preventDefault();
-      $$("#fPw .err").forEach(function (x) { x.hidden = true; });
-      var setErr = function (sel, msg) { var x = $(".err", $(sel).parentNode); x.textContent = msg; x.hidden = false; $(sel).focus(); };
-      if ($("#pN").value.length < 8) return setErr("#pN", "Mínimo 8 caracteres.");
-      if ($("#pN").value !== $("#pC").value) return setErr("#pC", "No coincide con la nueva contraseña.");
-      api("POST", "auth/password", { actual: $("#pA").value, nueva: $("#pN").value }).then(function () { e.target.reset(); toast("Contraseña cambiada."); })
-        .catch(function (x) { if (x.fields && x.fields.actual) setErr("#pA", x.fields.actual); else if (x.fields && x.fields.nueva) setErr("#pN", x.fields.nueva); else fail(x); });
+      var form = e.target, button = $('[type="submit"]', form), next = $("#pN", form).value;
+      if (button.disabled) return;
+      $$(".err", form).forEach(function (x) { x.hidden = true; });
+      var setErr = function (sel, msg) { if (!page.contains(form)) return; var input = $(sel, form), error = $(".err", input.parentNode); error.textContent = msg; error.hidden = false; input.focus(); };
+      if (Array.from(next).length < 12) return setErr("#pN", "Mínimo 12 caracteres.");
+      if (new TextEncoder().encode(next).length > 72) return setErr("#pN", "Máximo 72 bytes; usa menos caracteres o emojis.");
+      if (next !== $("#pC", form).value) return setErr("#pC", "No coincide con la nueva contraseña.");
+      button.disabled = true;
+      api("POST", "auth/password", { actual: $("#pA", form).value, nueva: next }).then(function (d) { CSRF=d.csrf; if (d.user) { ME = d.user; renderUser(); } form.reset(); toast("Contraseña cambiada. Se cerraron las otras sesiones."); })
+        .catch(function (x) { if (x.fields && x.fields.actual) setErr("#pA", x.fields.actual); else if (x.fields && (x.fields.nueva || x.fields.password)) setErr("#pN", x.fields.nueva || x.fields.password); else fail(x); })
+        .finally(function () { button.disabled = false; });
     });
   }
 
@@ -1256,9 +1343,9 @@
     {label:'Tiempo',render:function(r){return r.minutos+' min';}},
     {label:'Nota final',render:function(r){return '<b>'+num(r.nota_final)+'</b><span class="sub">'+(L.insc[r.estado]||[r.estado])[0]+'</span>';}},
     {label:'Última práctica',render:function(r){return fdt(r.ultima_practica);}},
-    {label:certificate?'Certificado':'Detalle',render:function(r){if(!certificate)return '<a class="btn btn-line btn-sm" href="#/seguimiento/estudiantes/'+r.estudiante_id+'">Ver estudiante</a>';if(r.certificado_id)return '<a class="btn btn-brand btn-sm" target="_blank" rel="noopener" href="api/index.php?r=certificados/'+r.certificado_id+'/documento">Ver certificado</a>';return r.certificable?'<button class="btn btn-brand btn-sm" data-cert="'+r.id+'">Generar certificado</button>':'<span class="sub">Pendiente de completar o aprobar</span>';}}
+    {label:certificate?'Certificado':'Detalle',render:function(r){if(!certificate)return '<a class="btn btn-line btn-sm" href="#/seguimiento/estudiantes/'+r.estudiante_id+'">Ver estudiante</a>';if(r.certificado_id)return '<a class="btn btn-brand btn-sm" target="_blank" rel="noopener" href="/api/certificados/'+r.certificado_id+'/documento">Ver certificado</a>';return r.certificable?'<button class="btn btn-brand btn-sm" data-cert="'+r.id+'">Generar certificado</button>':'<span class="sub">Pendiente de completar o aprobar</span>';}}
   ],list)||emptyBox('Sin inscripciones','No hay estudiantes inscritos en este ámbito.');}
-  function wireCertificates(container){$$('[data-cert]',container).forEach(function(b){b.addEventListener('click',function(){b.disabled=true;b.textContent='Generando…';api('POST','certificados',{inscripcion_id:+b.dataset.cert}).then(function(r){b.outerHTML='<a class="btn btn-brand btn-sm" target="_blank" rel="noopener" href="api/index.php?r=certificados/'+r.id+'/documento">Abrir certificado / PDF</a>';toast('Certificado ORBIT generado.');}).catch(function(e){b.disabled=false;b.textContent='Generar certificado';fail(e);});});});}
+  function wireCertificates(container){$$('[data-cert]',container).forEach(function(b){b.addEventListener('click',function(){b.disabled=true;b.textContent='Generando…';api('POST','certificados',{inscripcion_id:+b.dataset.cert}).then(function(r){b.outerHTML='<a class="btn btn-brand btn-sm" target="_blank" rel="noopener" href="/api/certificados/'+r.id+'/documento">Abrir certificado / PDF</a>';toast('Certificado ORBIT generado.');}).catch(function(e){b.disabled=false;b.textContent='Generar certificado';fail(e);});});});}
   function viewCertificates(){
     page.innerHTML='<div class="loading">Cargando certificados…</div>';
     api('GET','academico').then(function(d){page.innerHTML='<div class="ph"><div><span class="eyebrow">ORBIT · Dirección académica</span><h1>Certificados de finalización</h1><p>Completa los laboratorios del curso y obtén la aprobación de tu docente.</p></div></div><div class="ac-note">Requisitos: todos los laboratorios asignados completados, estado aprobado y nota final de al menos 51/100. El documento se puede imprimir o guardar como PDF.</div><div class="card">'+inscTable(d.inscripciones,true)+'</div>';wireCertificates(page);}).catch(fail);
@@ -1283,7 +1370,47 @@
       if(adminStats)h+='<section class="ac-section"><div class="ac-title"><h2>Administración de ORBIT</h2><span>Totales generales de la plataforma</span></div><div class="ac-metrics">'+acMetric(adminStats.universidades,'Instituciones','Activas')+acMetric(adminStats.carreras,'Carreras','Activas')+acMetric(adminStats.directores,'Directores de carrera','Cuentas asignadas a una carrera')+acMetric(adminStats.docentes,'Docentes','Cuentas registradas')+acMetric(adminStats.labs_publicados,'Laboratorios','Publicados')+acMetric(adminStats.libros,'Libros AR','Publicados')+acMetric(adminStats.pagos_pendientes,'Pagos pendientes','Por confirmar')+acMetric(bs(adminStats.ingreso_licencias),'Ingreso mensual estimado','Licencias activas')+acMetric(bs(adminStats.cobrado_mes),'Cobrado este mes','Planes Premium')+'</div></section>';
       $('#acContent').innerHTML=h;}
       $('#acCourse').addEventListener('change',draw);$('#acSearch').addEventListener('input',debounce(draw,150));draw();
-    }).catch(function(e){page.innerHTML=emptyBox('No se pudo cargar el seguimiento',' '+e.message);});
+    }).catch(function(e){if(viewCancelled(e))return;page.innerHTML=emptyBox('No se pudo cargar el seguimiento',' '+e.message);});
+  }
+
+  function viewAudit() {
+    if (ME.rol !== "admin") { location.hash = "#/"; return; }
+    page.innerHTML = '<div class="ph"><div><h1>Auditoría</h1><p>Historial de acciones y cambios de la plataforma.</p></div></div>' +
+      '<form id="auditFilters" class="toolbar"><div class="fld"><label for="auditEntity">Entidad</label><input class="inp" id="auditEntity" maxlength="64" placeholder="Todas"></div><div class="fld"><label for="auditAction">Acción</label><input class="inp" id="auditAction" maxlength="80" placeholder="Todas"></div><button class="btn btn-line btn-sm" type="submit">Filtrar</button></form>' +
+      '<p id="auditStatus" role="status"></p><div class="card" id="auditRows"></div><div class="ph-actions practice-status"><button class="btn btn-line btn-sm" id="auditMore" type="button" hidden>Cargar más</button></div>';
+    var items = [], cursor = null, busy = false, loadVersion = 0, applied = {};
+    var filters = $("#auditFilters"), box = $("#auditRows"), status = $("#auditStatus"), more = $("#auditMore");
+    function load(reset) {
+      if (busy && !reset) return;
+      var version = ++loadVersion, query = "auditoria&limit=50";
+      if (reset) { items = []; cursor = null; applied = { entity: $("#auditEntity").value.trim(), action: $("#auditAction").value.trim() }; }
+      ["entity", "action"].forEach(function (key) { if (applied[key]) query += "&" + key + "=" + encodeURIComponent(applied[key]); });
+      if (cursor) query += "&before_id=" + encodeURIComponent(cursor);
+      busy = true; more.disabled = true; status.textContent = "Cargando registros…";
+      api("GET", query).then(function (d) {
+        if (version !== loadVersion) return;
+        items = items.concat(d.items); cursor = d.next_cursor;
+        box.innerHTML = table([
+          { label: "Fecha", render: function (r) { return esc(fdt(r.created_at)); } },
+          { label: "Responsable", render: function (r) { return nameCell(r.actor_id == null ? "Sistema" : "Usuario #" + r.actor_id, r.actor_role || "Sistema"); } },
+          { label: "Acción", render: function (r) { return esc(r.action); } },
+          { label: "Entidad", render: function (r) { return nameCell(r.entity, r.entity_id == null ? "—" : "ID " + r.entity_id); } },
+          { label: "Solicitud", render: function (r) { return '<span class="audit-request">' + esc(r.request_id || "—") + '</span>'; } }
+        ], items, function (r) { return '<button type="button" class="btn btn-line btn-sm" data-audit="' + esc(r.id) + '">Ver detalles</button>'; }) || emptyBox("Sin registros", " No hay acciones con estos filtros.");
+        status.textContent = items.length + (items.length === 1 ? " registro" : " registros"); more.hidden = !cursor;
+      }).catch(function (e) { if (!viewCancelled(e) && version === loadVersion) status.textContent = e.message || "No se pudo cargar la auditoría."; }).finally(function () { if (version === loadVersion) { busy = false; more.disabled = false; } });
+    }
+    filters.addEventListener("submit", function (e) { e.preventDefault(); load(true); });
+    more.addEventListener("click", function () { load(false); });
+    box.addEventListener("click", function (e) {
+      var button = e.target.closest("[data-audit]"); if (!button) return;
+      var row = items.find(function (item) { return String(item.id) === button.dataset.audit; }); if (!row) return;
+      dlg.className = "modal"; dlg.innerHTML = '<div class="mh"><h2>Detalles del registro</h2><button type="button" class="ibtn" data-x aria-label="Cerrar">' + ic("i-close") + '</button></div><div class="mb"><pre class="audit-data"></pre></div>';
+      var data; try { data = typeof row.data === "string" ? JSON.parse(row.data) : row.data; } catch (_) { data = null; }
+      $(".audit-data", dlg).textContent = data == null ? "Sin detalles disponibles." : JSON.stringify(data, function (key, value) { return /password|contrase|secret|token|hash|cookie|authorization|credential|challenge|verifier|nonce|^code$|^actual$|^nueva$/i.test(key) ? "[oculto]" : value; }, 2);
+      $("[data-x]", dlg).addEventListener("click", closeModal); dlg.showModal();
+    });
+    load(true);
   }
 
   /* ---------- Navegación ---------- */
@@ -1295,7 +1422,7 @@
       ["Académico", [["universidades", "Instituciones", "i-building"], ["carreras", "Carreras", "i-cap"], ["directores", "Directores de carrera", "i-user"], ["docentes", "Docentes", "i-user"], ["estudiantes", "Estudiantes", "i-users"], ["clases", "Clases", "i-layers"]]],
       ["Contenidos", [["laboratorios", "Laboratorios", "i-cube"], ["libros", "Libros AR", "i-book"]]],
       ["Negocio", [["licencias", "Licencias", "i-key"], ["planes", "Planes freemium", "i-tag"], ["pagos", "Pagos", "i-card", "pagos"], ["solicitudes", "Solicitudes", "i-inbox", "solicitudes"]]],
-      ["Herramientas", [["importar", "Importar listas", "i-upload"], ["cuenta", "Mi cuenta", "i-gear"]]]
+      ["Herramientas", [["auditoria", "Auditoría", "i-chart"], ["importar", "Importar listas", "i-upload"], ["cuenta", "Mi cuenta", "i-gear"]]]
     ];
     if (r === "docente") return [[null, [["", "Resumen", "i-home"], ["seguimiento", "Progreso académico", "i-chart"], ["certificados", "Certificados", "i-cap"], ["clases", "Mis clases", "i-layers"], ["laboratorios", "Laboratorios", "i-cube"], ["libros", "Libros AR", "i-book"], ["cuenta", "Mi cuenta", "i-gear"]]]];
     if (isIndep()) return [[null, [["", "Resumen", "i-home"], ["seguimiento", "Mi progreso", "i-chart"], ["certificados", "Certificados", "i-cap"], ["laboratorios", "Laboratorios", "i-cube"], ["libros", "Libros AR", "i-book"], ["practicas", "Mis prácticas", "i-chart"], ["plan", "Mi plan", "i-tag"], ["cuenta", "Mi cuenta", "i-gear"]]]];
@@ -1316,7 +1443,7 @@
     $("#sideTag").textContent = ME.rol === "admin" ? "Administración" : ME.rol === "director" ? "Dirección de carrera" : ME.rol === "docente" ? "Docente" : isIndep() ? (ME.premium_hasta ? "Premium" : "Plan Gratis") : "Estudiante";
     $("#sideUser").innerHTML = '<span class="avatar" aria-hidden="true">' + esc(initials(ME)) + '</span><span class="who"><b>' + esc(ME.nombre + " " + ME.apellido) + "</b><small>" + esc(sub) + "</small></span>" +
       '<button class="tool" type="button" id="logout" aria-label="Cerrar sesión" title="Cerrar sesión">' + ic("i-logout") + "</button>";
-    $("#logout").addEventListener("click", function () { api("POST", "auth/logout").catch(function () {}).then(function () { location.href = "login.html"; }); });
+    $("#logout").addEventListener("click", function (e) { var button = e.currentTarget; if (button.disabled) return; button.disabled = true; api("POST", "auth/logout").then(function () { location.href = "login.html"; }).catch(function (error) { button.disabled = false; fail(error); }); });
   }
   function markNav() {
     var cur = (location.hash.replace(/^#\/?/, "").split("/")[0]) || "";
@@ -1329,6 +1456,7 @@
   }
 
   function route() {
+    viewVersion++;
     cleanup.forEach(function (f) { f(); }); cleanup = [];
     closeSide(); if (dlg.open) closeModal();
     var parts = location.hash.replace(/^#\/?/, "").split("/"), r = parts[0] || "", id = parts[1] && /^\d+$/.test(parts[1]) ? +parts[1] : null;
@@ -1340,6 +1468,7 @@
     document.title = title + " | ORBIT";
     window.scrollTo(0, 0);
     if (r === "") return viewHome();
+    if (r === "auditoria") return viewAudit();
     if (r === "seguimiento") return viewAcademic(parts[1],parts[2]);
     if (r === "certificados") return viewCertificates();
     if (r === "clases") return id ? viewClase(id) : isStudent() ? viewMisClases()
@@ -1376,7 +1505,7 @@
 
   /* Arranque */
   if (location.protocol === "file:") {
-    page.innerHTML = emptyBox("El panel necesita el servidor", " Abre el sitio desde http://localhost (XAMPP) y no como archivo. Revisa LEEME.md.");
+    page.innerHTML = emptyBox("El panel necesita el servidor", " Abre el sitio desde http://localhost:3000 y no como archivo. Revisa LEEME.md.");
     return;
   }
   api("GET", "auth/me").then(function (d) {

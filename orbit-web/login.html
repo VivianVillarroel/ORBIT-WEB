@@ -17,6 +17,7 @@
 </script>
 <link rel="preload" href="fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/google-auth.css">
 <script>if (location.protocol === "file:") document.write('<link rel="stylesheet" href="css/font-local.css">');</script>
 </head>
 <body>
@@ -59,10 +60,11 @@
       <a class="logo" href="index.html" aria-label="ORBIT, inicio"><svg viewBox="0 0 1964 411" aria-hidden="true"><use href="#logo"/></svg></a>
       <h1>Iniciar sesión</h1>
       <p class="sub">Ingresa con el correo de tu institución.</p>
+      <div class="google-access"><a class="google-button" href="/api/auth/google/start" data-google-start><img src="img/google-g.svg" alt="" width="20" height="20">Continuar con Google</a><p id="googleStatus" class="google-status" role="status" hidden></p><div class="google-divider">o continúa con tu correo</div></div>
       <form class="lform" id="lgForm" novalidate>
         <div class="lf"><label for="l-mail">Correo</label><input id="l-mail" type="email" autocomplete="username" inputmode="email" placeholder="nombre@institucion.edu.bo"></div>
         <div class="lf"><label for="l-pass">Contraseña</label><div class="pw"><input id="l-pass" type="password" autocomplete="current-password" placeholder="Tu contraseña"><button type="button" id="eye" aria-controls="l-pass" aria-pressed="false">Mostrar</button></div></div>
-        <div class="lrow"><label class="check"><input type="checkbox" id="l-rem">Recordarme</label><button class="txtbtn" type="button" id="forgot">¿Olvidaste tu contraseña?</button></div>
+        <div class="lrow"><span>Sesión protegida</span><button class="txtbtn" type="button" id="forgot">¿Olvidaste tu contraseña?</button></div>
         <p class="lmsg" id="lmsg" role="status" hidden></p>
         <button class="btn btn-brand" type="submit" id="lgSubmit">Ingresar</button>
       </form>
@@ -74,5 +76,6 @@
 </main>
 
 <script src="js/main.js" defer></script>
+<script src="js/google-auth.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,37 @@
+{
+  "name": "orbit-web",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.16"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/index.js",
+    "dev": "node --watch --env-file-if-exists=.env server/index.js",
+    "db:migrate": "node --env-file-if-exists=.env --env-file-if-exists=.env.migration.local server/scripts/migrate.js",
+    "admin:create": "node --env-file-if-exists=.env server/scripts/admin.js",
+    "test": "node --test server/tests/*.test.js",
+    "test:integration": "node --env-file-if-exists=.env.test.local --test --test-concurrency=1 server/tests/*.integration.js",
+    "db:backup": "node --env-file-if-exists=.env server/scripts/backup.js",
+    "db:archive-demo-labs": "node --env-file-if-exists=.env server/scripts/archive-demo-labs.js",
+    "check:production": "node --env-file-if-exists=.env deploy/node/preflight.mjs",
+    "format": "prettier --write \"server/**/*.js\" \"orbit-web/js/auth.js\"",
+    "format:check": "prettier --check \"server/**/*.js\" \"orbit-web/js/auth.js\""
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.2",
+    "express-session": "^1.19.0",
+    "google-auth-library": "^11.3.2",
+    "helmet": "^8.3.0",
+    "multer": "^2.5.0",
+    "mysql2": "^3.24.6",
+    "nodemailer": "^10.3.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1",
+    "prettier": "^3.9.10"
+  }
+}

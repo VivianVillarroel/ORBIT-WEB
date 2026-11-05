@@ -1,0 +1,10 @@
+.google-access { margin: 24px 0; }
+.google-button { display:flex; align-items:center; justify-content:center; gap:12px; width:100%; min-height:44px; padding:11px 16px; border:1px solid #747775; border-radius:8px; background:#fff; color:#1f1f1f; font:500 14px/1.4 Arial,sans-serif; text-decoration:none; cursor:pointer; }
+.google-button:hover { background:#f2f5fa; box-shadow:0 1px 3px #0000001f; }
+.google-button:focus-visible { outline:3px solid #4285f4; outline-offset:3px; }
+.google-button img { width:20px; height:20px; flex:none; }
+.google-button:disabled { opacity:.6; cursor:wait; }
+.google-button[aria-disabled="true"] { opacity:.6; cursor:not-allowed; box-shadow:none; }
+.google-divider { display:flex; align-items:center; gap:12px; margin:20px 0 0; color:var(--ink-3,#6b6581); font-size:13px; }
+.google-divider::before,.google-divider::after { content:""; flex:1; border-top:1px solid #74777555; }
+.google-status { margin:12px 0; font-size:14px; line-height:1.6; }

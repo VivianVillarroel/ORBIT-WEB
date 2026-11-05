@@ -190,7 +190,7 @@
       document.body.removeChild(ta);
     }
   }
-  var MAIL = "orbitunivalle@gmail.com";
+  var MAIL = "contacto.orbit.bo@gmail.com";
   var copyMail = $("#copyMail");
   if (copyMail) {
     copyMail.addEventListener("click", function () { copyText(MAIL, copyMail, "Copiar"); });
@@ -232,7 +232,7 @@
         }).catch(function () {});
       }
       window.location.href = "mailto:" + MAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-      ok.textContent = tr("Abrimos tu correo con la solicitud lista. Si no se abrió, escríbenos a orbitunivalle@gmail.com.");
+      ok.textContent = tr("Abrimos tu correo con la solicitud lista. Si no se abrió, escríbenos a contacto.orbit.bo@gmail.com.");
       ok.hidden = false;
     });
   }
@@ -249,7 +249,7 @@
       eye.textContent = tr(show ? "Ocultar" : "Mostrar");
       eye.setAttribute("aria-pressed", String(show));
     });
-    $("#forgot").addEventListener("click", function () { say("Escríbenos a orbitunivalle@gmail.com desde el correo de tu cuenta y te ayudamos a recuperarla."); });
+    $("#forgot").addEventListener("click", function () { say("Escríbenos a contacto.orbit.bo@gmail.com desde el correo de tu cuenta y te ayudamos a recuperarla."); });
     lform.addEventListener("submit", function (e) {
       e.preventDefault();
       [lmail, lpass].forEach(function (f) { f.removeAttribute("aria-invalid"); });
